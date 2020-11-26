@@ -15,9 +15,11 @@ class BoardState:
                 piece = gameBoard.getPiece(pos)
                 if piece is not None:
                     content = piece.text
+                    color = piece.color
                 else:
                     content = "None"
-                self.map[x].append(FieldState(content))
+                    color = "None"
+                self.map[x].append(FieldState(content, color))
                 if selectedPiecePos == pos:
                     self.map[x][y].isSelected = True
                 elif selectedPiece is not None:
@@ -26,7 +28,8 @@ class BoardState:
 
 
 class FieldState:
-    def __init__(self, pieceName):
+    def __init__(self, pieceName, pieceColor):
         self.piece = pieceName
+        self.color = pieceColor
         self.isSelected = False
         self.isPossible = False

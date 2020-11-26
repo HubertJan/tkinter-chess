@@ -21,7 +21,7 @@ class Pawn(Piece):
             if(x1 is x2 and
                (y1 - y2 >= 0 and y1 - y2 <= 2)):
                 return True
-        else:
+        elif pieceAtTo.color != self.color:
             if self.moveDir == Direction.UP:
                 x1 = toPos.X
                 x2 = currentPos.X
