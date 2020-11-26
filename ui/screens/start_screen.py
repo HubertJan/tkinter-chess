@@ -6,13 +6,17 @@ from ui.screen import Screen
 class StartScreen(Screen):
     ROUTENAME = "/"
 
+    def clickButton(self):
+        self._screenManager.navigate("/chess")
+
     def initBuild(self):
-        LabelGame = Label(master=self._window, text="Ein Schach",
+        LabelGame = Label(text="Ein Schach",
                           fg="#265B78")
         LabelGame["font"] = font.Font(family='Arial', size=70, weight='bold')
         LabelGame.place(anchor="center", relx=0.5, rely=0.2)
 
         ButtonPlay = Button(text="Spielen",
+                            command=self.clickButton,
                             bg="#265B78",
                             activebackground="#265B78",
                             fg="#ffffff",

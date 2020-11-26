@@ -1,6 +1,6 @@
 from tkinter import Tk
 
-#from ui.screens.main_screen import MainScreen
+from ui.screens.chess_screen import ChessScreen
 from ui.screens.start_screen import StartScreen
 
 
@@ -10,7 +10,8 @@ class ScreenManager:
         self.window.resizable(width=False, height=False)
         self.window.geometry("1000x800")
 
-        self._screens = {StartScreen.ROUTENAME: StartScreen(self), }
+        self._screens = {StartScreen.ROUTENAME: StartScreen(self),
+                         ChessScreen.ROUTENAME: ChessScreen(self), }
         self._currentScreenRouteName = None
 
     def start(self):

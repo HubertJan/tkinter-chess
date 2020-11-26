@@ -39,6 +39,6 @@ class ViewDisplay(IView):
 #viewDisplay = ViewDisplay()
 # viewDisplay.click()
 
-
 manager = ScreenManager()
 manager.start()
+
