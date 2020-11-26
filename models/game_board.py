@@ -36,7 +36,7 @@ class GameBoard:
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
                 piece = self.pieceMap[x][y]
-                if piece is None and piece.isKing is True:
+                if piece is not None and piece.isKing == True:
                     kingPosList.append(BoardPosition(x, y))
 
         isCheckmate = False

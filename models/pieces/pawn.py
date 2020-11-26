@@ -22,7 +22,19 @@ class Pawn(Piece):
                (y1 - y2 >= 0 and y1 - y2 <= 2)):
                 return True
         else:
-            return
+            if self.moveDir == Direction.UP:
+                x1 = toPos.X
+                x2 = currentPos.X
+                y1 = toPos.Y
+                y2 = currentPos.Y
+            else:
+                x1 = toPos.X
+                x2 = currentPos.X
+                y1 = currentPos.Y
+                y2 = toPos.Y
+            if(abs(x1-x2) == 1 and
+               (y1 - y2 == 1)):
+                return True
         return False
 
     def allPossibleMoves(self, pieceMap, currentPos):

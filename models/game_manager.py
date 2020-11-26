@@ -47,6 +47,9 @@ class GameManager:
         self._selectedPiecePos = pos
         return True
 
+    def unselectPiece(self):
+        self._selectedPiecePos = None
+
     def _endTurn(self):
         if self._currentPlayerIndex + 1 is len(self._playerList):
             self._currentPlayerIndex = 0

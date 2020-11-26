@@ -16,6 +16,9 @@ class GameController:
         else:
             if self.gameManager.moveSelectedPiece(BoardPosition(x, y)):
                 self.view.update()
+            else:
+                self.gameManager.unselectPiece()
+                self.view.update()
 
     def getBoardState(self):
         return self.gameManager.getBoardState()
