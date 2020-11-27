@@ -3,7 +3,7 @@ from helper.board_position import BoardPosition
 
 
 class Rock(Piece):
-    name = "king"
+    name = "rock"
 
     def canMove(self, pieceMap, currentPos, toPos):
         pieceAtTo = self._getPiece(pieceMap, toPos)

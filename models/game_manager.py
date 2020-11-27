@@ -1,4 +1,5 @@
 from copy import deepcopy
+from math import floor
 
 from models.game_board import GameBoard
 from models.piece import Piece
@@ -69,4 +70,4 @@ class GameManager:
         return BoardState(deepcopy(self._board), self._selectedPiecePos)
     
     def getRoundNumber(self):
-        return round(len(self.turns)/len(self._playerList) + 1)
+        return floor(len(self.turns)/len(self._playerList)) + 1

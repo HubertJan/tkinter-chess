@@ -4,6 +4,9 @@ from PIL import ImageTk, Image
 from helper.board_state import BoardState
 from models.pieces.pawn import Pawn
 from models.pieces.knight import Knight
+from models.pieces.rock import Rock
+from models.pieces.bishop import Bishop
+from models.pieces.king import King
 from controller.game_controller import GameController
 
 
@@ -44,7 +47,8 @@ class ChessBoard(Frame):
                     textIsSelect = "-select"
                 else:
                     textIsSelect = ""
-                img = Image.open(f'IMG/figure/{text}-{color}{textIsSelect}.png')
+                img = Image.open(
+                    f'IMG/figure/{text}-{color}{textIsSelect}.png')
                 img = img.resize((80, 80), Image.ANTIALIAS)
                 img = ImageTk.PhotoImage(img)
                 self._images[text][color][i] = img
@@ -55,6 +59,8 @@ class ChessBoard(Frame):
 
         self._loadPieceImage(Pawn.name, colors)
         self._loadPieceImage(Knight.name, colors)
+        self._loadPieceImage(King.name, colors)
+        self._loadPieceImage(Rock.name, colors)
 
         img = Image.open("IMG/figure/empty.png")
         img = img.resize((80, 80), Image.ANTIALIAS)

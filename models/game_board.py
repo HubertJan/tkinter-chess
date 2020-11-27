@@ -2,6 +2,8 @@ from helper.board_position import BoardPosition
 from models.piece import Piece, Direction
 from models.pieces.pawn import Pawn
 from models.pieces.knight import Knight
+from models.pieces.king import King
+from models.pieces.rock import Rock
 
 
 class GameBoard:
@@ -12,15 +14,36 @@ class GameBoard:
         for x in range(8):
             self._pieceMap.append([])
             for y in range(8):
-                if y is 1:
+                if y == 1:
                     self._pieceMap[x].append(
                         Pawn("white", False, Direction.UP))
-                elif y is 6:
+                elif y == 6:
                     self._pieceMap[x].append(
                         Pawn("black", False, Direction.DOWN))
-                elif y is 0:
-                    self._pieceMap[x].append(
-                        Knight("white", False, Direction.UP))
+                elif y == 0:
+                    if(x == 1 or x == 6):
+                        self._pieceMap[x].append(
+                            Knight("white", False, Direction.UP))
+                    elif x == 3:
+                        self._pieceMap[x].append(
+                            King("white", True, Direction.UP))
+                    elif(x == 0 or x == 7):
+                        self._pieceMap[x].append(
+                            Rock("white", False, Direction.UP))
+                    else:
+                        self._pieceMap[x].append(None)
+                elif y == 7:
+                    if(x == 1 or x == 6):
+                        self._pieceMap[x].append(
+                            Knight("black", False, Direction.UP))
+                    elif x == 3:
+                        self._pieceMap[x].append(
+                            King("black", True, Direction.UP))
+                    elif(x == 0 or x == 7):
+                        self._pieceMap[x].append(
+                            Rock("black", False, Direction.UP))
+                    else:
+                        self._pieceMap[x].append(None)
                 else:
                     self._pieceMap[x].append(None)
 
@@ -35,12 +58,12 @@ class GameBoard:
                     textLine += piece.text + " "
             print(textLine)
 
-    def _isCheckmate(self):
+    def _checkIfCheckmate(self, color):
         kingPosList = []
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
                 piece = self.pieceMap[x][y]
-                if piece is not None and piece.isKing == True:
+                if piece is not None and piece.isKing == True and piece.color == color:
                     kingPosList.append(BoardPosition(x, y))
 
         isCheckmate = False
@@ -54,8 +77,10 @@ class GameBoard:
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
                 piece = self.pieceMap[x][y]
-                isThreatenend = piece.canMove(self.pieceMap, BoardPosition(
-                    x, y), pos)
+                if(piece is not None):
+                    if piece.canMove(self.pieceMap, BoardPosition(
+                        x, y), pos):
+                        isThreatenend = True
         return isThreatenend
 
     def movePiece(self, fromPos, toPos):
@@ -66,7 +91,7 @@ class GameBoard:
         if piece.canMove(self.pieceMap, fromPos, toPos):
             self.setPiece(toPos, piece)
             self.setPiece(fromPos, None)
-            if not self._isCheckmate:
+            if self._checkIfCheckmate(piece.color):
                 # Wenn Zug als Checkmate erkannt wird, wird er rückgäng gemacht.
                 self.setPiece(fromPos, piece)
                 self.setPiece(toPos, pieceAtToPos)
@@ -100,7 +125,7 @@ class GameBoard:
 
         self.setPiece(toPos, piece)
         self.setPiece(fromPos, None)
-        isCheckmate = self._isCheckmate()
+        isCheckmate = self._checkIfCheckmate(piece.color)
         self.setPiece(fromPos, piece)
         self.setPiece(toPos, pieceAtToPos)
         return isCheckmate
