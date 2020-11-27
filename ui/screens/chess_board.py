@@ -3,7 +3,9 @@ from PIL import ImageTk, Image
 
 from helper.board_state import BoardState
 from models.pieces.pawn import Pawn
+from models.pieces.knight import Knight
 from controller.game_controller import GameController
+
 
 class ChessBoard(Frame):
 
@@ -19,11 +21,13 @@ class ChessBoard(Frame):
                 if(state.map[x][y].piece == "None"):
                     self._changeFieldImage(x, y, self._images["None"])
                 else:
-                    if state.map[x][y].isSelected: 
+                    if state.map[x][y].isSelected:
                         sel = 1
                     else:
                         sel = 0
-                    self._changeFieldImage(x, y, self._images[state.map[x][y].piece][state.map[x][y].color][sel])
+                    print(state.map[x][y].piece)
+                    self._changeFieldImage(
+                        x, y, self._images[state.map[x][y].piece][state.map[x][y].color][sel])
 
     def createClickFieldFunc(self, x, y):
         return lambda: self.clickField(x, y)
@@ -31,32 +35,26 @@ class ChessBoard(Frame):
     def _changeFieldImage(self, x, y, img):
         self._board[x][y].config(image=img)
 
+    def _loadPieceImage(self, text, colors: list):
+        self._images[text] = {}
+        for color in colors:
+            self._images[text][color] = [None] * 2
+            for i in range(2):
+                if(i == 1):
+                    textIsSelect = "-select"
+                else:
+                    textIsSelect = ""
+                img = Image.open(f'IMG/figure/{text}-{color}{textIsSelect}.png')
+                img = img.resize((80, 80), Image.ANTIALIAS)
+                img = ImageTk.PhotoImage(img)
+                self._images[text][color][i] = img
+
     def loadImages(self):
         self._images = {}
+        colors = ["black", "white"]
 
-        self._images[Pawn.text] = {}
-        self._images[Pawn.text]["black"] = [None] * 2
-
-        img = Image.open("IMG/figure/chess-pawn.png")
-        img = img.resize((80, 80), Image.ANTIALIAS)
-        self._images[Pawn.text]["black"][0] = ImageTk.PhotoImage(img)
-
-        img = Image.open("IMG/figure/chess-pawn-black-select.png")
-        img = img.resize((80, 80), Image.ANTIALIAS)
-        self._images[Pawn.text]["black"][1] = ImageTk.PhotoImage(img)
-
-        self._images[Pawn.text]["white"] = [None] * 2
-        img = Image.open("IMG/figure/chess-pawn-white.png")
-        img = img.resize((80, 80), Image.ANTIALIAS)
-        self._images[Pawn.text]["white"][0] = ImageTk.PhotoImage(img)
-
-        img = Image.open("IMG/figure/chess-pawn-white-select.png")
-        img = img.resize((80, 80), Image.ANTIALIAS)
-        self._images[Pawn.text]["white"][1] = ImageTk.PhotoImage(img)
-
-        img = Image.open("IMG/figure/chess-king.png")
-        img = img.resize((80, 80), Image.ANTIALIAS)
-        self._kingImage = ImageTk.PhotoImage(img)
+        self._loadPieceImage(Pawn.name, colors)
+        self._loadPieceImage(Knight.name, colors)
 
         img = Image.open("IMG/figure/empty.png")
         img = img.resize((80, 80), Image.ANTIALIAS)
@@ -86,6 +84,3 @@ class ChessBoard(Frame):
                                              image=self._images["None"],
                                              borderwidth=0,  command=self.createClickFieldFunc(i, u)))
                 self._board[i][u].grid(row=u, column=i)
-
-     
-

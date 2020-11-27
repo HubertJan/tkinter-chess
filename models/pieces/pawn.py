@@ -3,7 +3,7 @@ from helper.board_position import BoardPosition
 
 
 class Pawn(Piece):
-    text = "Pa"
+    name = "pawn"
 
     def canMove(self, pieceMap, currentPos, toPos):
         pieceAtTo = self._getPiece(pieceMap, toPos)

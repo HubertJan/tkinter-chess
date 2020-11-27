@@ -15,7 +15,7 @@ class Piece(ABC):
 
     @property
     @abstractmethod
-    def text(self):
+    def name(self):
         pass
 
     @abstractmethod
