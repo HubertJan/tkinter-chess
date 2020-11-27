@@ -1,6 +1,7 @@
 from helper.board_position import BoardPosition
 from models.piece import Piece, Direction
 from models.pieces.pawn import Pawn
+from models.pieces.knight import Knight
 
 
 class GameBoard:
@@ -11,12 +12,15 @@ class GameBoard:
         for x in range(8):
             self._pieceMap.append([])
             for y in range(8):
-                if y is 0:
+                if y is 1:
                     self._pieceMap[x].append(
                         Pawn("white", False, Direction.UP))
-                elif y is 7:
+                elif y is 6:
                     self._pieceMap[x].append(
                         Pawn("black", False, Direction.DOWN))
+                elif y is 0:
+                    self._pieceMap[x].append(
+                        Knight("white", False, Direction.UP))
                 else:
                     self._pieceMap[x].append(None)
 
@@ -126,7 +130,7 @@ class GameBoard:
             print()
 
     def setPiece(self, boardPosition, piece):
-        self._pieceMap[boardPosition.X][boardPosition.Y]=piece
+        self._pieceMap[boardPosition.X][boardPosition.Y] = piece
 
     def canColorMove(self, color):
         return self.getAllPossibleMoves(color) != []

@@ -14,7 +14,7 @@ class BoardState:
                 pos = BoardPosition(x, y)
                 piece = gameBoard.getPiece(pos)
                 if piece is not None:
-                    content = piece.text
+                    content = piece.name
                     color = piece.color
                 else:
                     content = "None"
