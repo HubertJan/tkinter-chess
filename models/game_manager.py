@@ -67,3 +67,6 @@ class GameManager:
 
     def getBoardState(self):
         return BoardState(deepcopy(self._board), self._selectedPiecePos)
+    
+    def getRoundNumber(self):
+        return round(len(self.turns)/len(self._playerList) + 1)

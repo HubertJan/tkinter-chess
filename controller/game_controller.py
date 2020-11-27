@@ -22,3 +22,9 @@ class GameController:
 
     def getBoardState(self):
         return self.gameManager.getBoardState()
+
+    def getRoundNumber(self):
+        return self.gameManager.getRoundNumber()
+
+    def getCurrentPlayer(self):
+        return self.gameManager.currentPlayer

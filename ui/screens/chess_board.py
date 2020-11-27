@@ -2,14 +2,10 @@ from tkinter import Frame, Button
 from PIL import ImageTk, Image
 
 from helper.board_state import BoardState
-from controller.game_controller import GameController
-from controller.interface_view import IView
-from models.game_manager import GameManager
-from models.game_board import GameBoard
 from models.pieces.pawn import Pawn
+from controller.game_controller import GameController
 
-
-class ChessBoard(Frame, IView):
+class ChessBoard(Frame):
 
     def setBoard(self):
         print()
@@ -66,11 +62,9 @@ class ChessBoard(Frame, IView):
         img = img.resize((80, 80), Image.ANTIALIAS)
         self._images["None"] = ImageTk.PhotoImage(img)
 
-    def update(self):
-        self.updateBoard(self.gameController.getBoardState())
-
-    def __init__(self, master):
+    def __init__(self, master, gameController):
         super().__init__(master)
+        self.gameController = gameController
         self.loadImages()
 
         boardHeight = 8
@@ -93,6 +87,5 @@ class ChessBoard(Frame, IView):
                                              borderwidth=0,  command=self.createClickFieldFunc(i, u)))
                 self._board[i][u].grid(row=u, column=i)
 
-        self.gameController=GameController(self, GameManager(GameBoard()))
-        self.updateBoard(self.gameController.getBoardState())
+     
 
