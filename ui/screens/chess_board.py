@@ -22,13 +22,15 @@ class ChessBoard(Frame):
         for x in range(len(state.map)):
             for y in range(len(state.map[x])):
                 if(state.map[x][y].piece == "None"):
-                    self._changeFieldImage(x, y, self._images["None"])
+                    if state.map[x][y].isPossible:
+                        self._changeFieldImage(x, y, self._images["Possible"])
+                    else:
+                        self._changeFieldImage(x, y, self._images["None"])
                 else:
                     if state.map[x][y].isSelected:
                         sel = 1
                     else:
                         sel = 0
-                    print(state.map[x][y].piece)
                     self._changeFieldImage(
                         x, y, self._images[state.map[x][y].piece][state.map[x][y].color][sel])
 
@@ -65,6 +67,9 @@ class ChessBoard(Frame):
         img = Image.open("IMG/figure/empty.png")
         img = img.resize((80, 80), Image.ANTIALIAS)
         self._images["None"] = ImageTk.PhotoImage(img)
+        img = Image.open("IMG/possible.png")
+        img = img.resize((80, 80), Image.ANTIALIAS)
+        self._images["Possible"] = ImageTk.PhotoImage(img)
 
     def __init__(self, master, gameController):
         super().__init__(master)

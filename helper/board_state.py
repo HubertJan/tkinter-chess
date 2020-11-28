@@ -24,7 +24,7 @@ class BoardState:
                     self.map[x][y].isSelected = True
                 elif selectedPiece is not None:
                     self.map[x][y].isPossible = selectedPiece.canMove(
-                        gameBoard.pieceMap, selectedPiecePos, pos)
+                        gameBoard.pieceMap, selectedPiecePos, pos) or len(gameBoard.canSpecialMove(selectedPiecePos, pos)) != 0
 
 
 class FieldState:

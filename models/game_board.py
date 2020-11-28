@@ -16,32 +16,32 @@ class GameBoard:
             for y in range(8):
                 if y == 1:
                     self._pieceMap[x].append(
-                        Pawn("white", False, Direction.UP))
+                        Pawn("black", False, Direction.UP))
                 elif y == 6:
                     self._pieceMap[x].append(
-                        Pawn("black", False, Direction.DOWN))
+                        Pawn("white", False, Direction.DOWN))
                 elif y == 0:
                     if(x == 1 or x == 6):
                         self._pieceMap[x].append(
-                            Knight("white", False, Direction.UP))
-                    elif x == 3:
+                            Knight("black", False))
+                    elif x == 4:
                         self._pieceMap[x].append(
-                            King("white", True, Direction.UP))
+                            King("black", True))
                     elif(x == 0 or x == 7):
                         self._pieceMap[x].append(
-                            Rock("white", False, Direction.UP))
+                            Rock("black", False))
                     else:
                         self._pieceMap[x].append(None)
                 elif y == 7:
                     if(x == 1 or x == 6):
                         self._pieceMap[x].append(
-                            Knight("black", False, Direction.UP))
-                    elif x == 3:
+                            Knight("white", False))
+                    elif x == 4:
                         self._pieceMap[x].append(
-                            King("black", True, Direction.UP))
+                            King("white", True))
                     elif(x == 0 or x == 7):
                         self._pieceMap[x].append(
-                            Rock("black", False, Direction.UP))
+                            Rock("white", False))
                     else:
                         self._pieceMap[x].append(None)
                 else:
@@ -72,14 +72,14 @@ class GameBoard:
                 isCheckmate = True
         return isCheckmate
 
-    def _isThreatenend(self, pos):
+    def _isThreatenend(self, pos, ignoreColor=""):
         isThreatenend = False
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
                 piece = self.pieceMap[x][y]
                 if(piece is not None):
-                    if piece.canMove(self.pieceMap, BoardPosition(
-                        x, y), pos):
+                    if (ignoreColor == "" or piece.color != ignoreColor) and piece.canMove(self.pieceMap, BoardPosition(
+                            x, y), pos):
                         isThreatenend = True
         return isThreatenend
 
@@ -96,6 +96,14 @@ class GameBoard:
                 self.setPiece(fromPos, piece)
                 self.setPiece(toPos, pieceAtToPos)
                 return False
+            return True
+        specialMove = self.canSpecialMove(fromPos, toPos)
+        if len(specialMove) != 0:
+
+            self.setPiece(toPos, self.getPiece(fromPos))
+            self.setPiece(fromPos, None)
+            self.setPiece(specialMove[1][1], self.getPiece(specialMove[1][0]))
+            self.setPiece(specialMove[1][0], None)
             return True
         else:
             return False
@@ -147,7 +155,77 @@ class GameBoard:
 
     # Return castling move, wenn dieser möglich ist
     def _getSpecialMoves(self):
-        return
+        moves = []
+        moves += (self._getCastlingMoves())
+        return moves
+
+    def canSpecialMove(self, fromPos, toPos):
+        moves = self._getSpecialMoves()
+        possibleMove = []
+        if moves != [[]]:
+            for move in moves:
+                if move[0] == [fromPos, toPos]:
+                    possibleMove = move
+                    break
+        return possibleMove
+
+    def _getCastlingMove(self, y, rockX):
+        king = self.getPiece(BoardPosition(4, y))
+        rock = self.getPiece(BoardPosition(rockX, y))
+        if king != None and king.name == "king" and rock != None and rock.name == "rock":
+            if not self.checkIfSomethingBetween(BoardPosition(4, y), BoardPosition(rockX, y), "y"):
+                if rockX == 7:
+                    if not self._isThreatenendList([BoardPosition(4, y), BoardPosition(5, y), BoardPosition(6, y)], king.color):
+                        return [BoardPosition(4, y), BoardPosition(6, y)], [BoardPosition(rockX, y), BoardPosition(5, y)]
+                elif rockX == 0:
+                    if not self._isThreatenendList([BoardPosition(4, y), BoardPosition(3, y), BoardPosition(2, y)], king.color):
+                        return [BoardPosition(4, y), BoardPosition(2, y)], [BoardPosition(rockX, y), BoardPosition(3, y)]
+        return None
+
+    def _getCastlingMoves(self):
+        moves = []
+        if self._getCastlingMove(0, 7) is not None:
+            moves.append(self._getCastlingMove(0, 7))
+        if self._getCastlingMove(0, 0) is not None:
+            moves.append(self._getCastlingMove(0, 0))
+        if self._getCastlingMove(7, 7) is not None:
+            moves.append(self._getCastlingMove(7, 7))
+        if self._getCastlingMove(7, 0) is not None:
+            moves.append(self._getCastlingMove(7, 0))
+        return moves
+
+    def _isThreatenendList(self, posList, color=""):
+        threatenend = False
+        for pos in posList:
+            if self._isThreatenend(pos, color):
+                threatenend = True
+        return threatenend
+
+    def checkIfSomethingBetween(self, pos1, pos2, axis):
+        somethingBetween = False
+        if(axis == "y"):
+            p1 = pos1.X
+            p2 = pos2.X
+        else:
+            p1 = pos1.Y
+            p2 = pos2.Y
+
+        if(p1 < p2):
+            stepSize = 1
+        elif(p1 > p2):
+            stepSize = -1
+        else:
+            return False
+        c = p1 + stepSize
+        while c != p2:
+            if(axis == "y"):
+                if self._pieceMap[c][pos1.Y] is not None:
+                    somethingBetween = True
+            else:
+                if self._pieceMap[pos1.X][c] is not None:
+                    somethingBetween = True
+            c += stepSize
+        return somethingBetween
 
     def _getSpecialMovesOfPiece(self, pos):
         piece = self.getPiece(pos)

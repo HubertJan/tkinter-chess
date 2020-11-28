@@ -5,6 +5,10 @@ from helper.board_position import BoardPosition
 class Pawn(Piece):
     name = "pawn"
 
+    def __init__(self, color, isKing, moveDir):
+        super().__init__(color, isKing)
+        self.moveDir = moveDir
+
     def canMove(self, pieceMap, currentPos, toPos):
         pieceAtTo = self._getPiece(pieceMap, toPos)
         if pieceAtTo is None:

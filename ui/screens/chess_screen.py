@@ -28,9 +28,12 @@ class ChessScreen(Screen, IView):
         self.update()
 
     def clear(self):
-        print()
+        self.screenFrame.destroy()
 
     def update(self):
+        if(self.gameController.getGameOver()):
+            self._screenManager.navigate("/")
+            return
         self.chessBoard.updateBoard(self.gameController.getBoardState())
         self.statusBar.setGameRound(self.gameController.getRoundNumber())
         currentPlayer = self.gameController.getCurrentPlayer()

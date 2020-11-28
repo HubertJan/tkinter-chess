@@ -7,24 +7,27 @@ class GameController:
 
     def __init__(self, view: IView, gameManager: GameManager):
         self.view = view
-        self.gameManager = gameManager
+        self._gameManager = gameManager
 
     def clickField(self, x, y):
-        if self.gameManager.isPieceSelected is False:
-            if self.gameManager.selectPiece(BoardPosition(x, y)):
+        if self._gameManager.isPieceSelected is False:
+            if self._gameManager.selectPiece(BoardPosition(x, y)):
                 self.view.update()
         else:
-            if self.gameManager.moveSelectedPiece(BoardPosition(x, y)):
+            if self._gameManager.moveSelectedPiece(BoardPosition(x, y)):
                 self.view.update()
             else:
-                self.gameManager.unselectPiece()
+                self._gameManager.unselectPiece()
                 self.view.update()
 
     def getBoardState(self):
-        return self.gameManager.getBoardState()
+        return self._gameManager.getBoardState()
 
     def getRoundNumber(self):
-        return self.gameManager.getRoundNumber()
+        return self._gameManager.getRoundNumber()
 
     def getCurrentPlayer(self):
-        return self.gameManager.currentPlayer
+        return self._gameManager.currentPlayer
+    
+    def getGameOver(self):
+        return self._gameManager.isGameFinished()

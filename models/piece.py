@@ -8,10 +8,10 @@ class Direction(Enum):
 
 
 class Piece(ABC):
-    def __init__(self, color, isKing, moveDir):
+    def __init__(self, color, isKing):
         self.color = color
         self.isKing = isKing
-        self.moveDir = moveDir
+        
 
     @property
     @abstractmethod

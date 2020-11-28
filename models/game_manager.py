@@ -24,19 +24,17 @@ class GameManager:
         self.turns.append([fromPos, toPos])
 
     def moveSelectedPiece(self, toPos: BoardPosition):
-        if self._isGameFinished():
+        if self.isGameFinished():
             return False
         if self._selectedPiecePos is None:
             return False
-        if toPos.Y == 6:
-            print("yet")
         if self._board.movePiece(self._selectedPiecePos, toPos):
             self._addTurn(self._selectedPiecePos, toPos)
             self._endTurn()
             return True
         return False
 
-    def _isGameFinished(self):
+    def isGameFinished(self):
         return self._board.canColorMove(self.currentPlayer) is False
 
     def selectPiece(self, pos: BoardPosition):

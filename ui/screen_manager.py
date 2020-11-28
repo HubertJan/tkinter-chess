@@ -19,7 +19,6 @@ class ScreenManager:
         self.window.mainloop()
 
     def navigate(self, screenRouteName):
-        self._currentScreenRouteName = screenRouteName
         if(self._currentScreenRouteName != None):
             self._screens[self._currentScreenRouteName].clear()
         self._screens[screenRouteName].initBuild()
