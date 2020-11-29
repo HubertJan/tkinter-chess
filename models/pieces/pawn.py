@@ -50,4 +50,7 @@ class Pawn(Piece):
         return possibleMovePos
 
     def canPromote(self, pieceMap, currentPos):
-        return None
+        if(currentPos.Y == 7 and self.moveDir == Direction.UP or
+           currentPos.Y == 0 and self.moveDir == Direction.DOWN):
+           return True
+        return False

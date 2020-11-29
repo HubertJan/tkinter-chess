@@ -4,48 +4,67 @@ from models.pieces.pawn import Pawn
 from models.pieces.knight import Knight
 from models.pieces.king import King
 from models.pieces.rock import Rock
+from models.pieces.queen import Queen
+from models.pieces.bishop import Bishop
 
 
 class GameBoard:
     _pieceMap = []
     boardSize = [8, 8]
 
-    def __init__(self):
+    def _createChessBoard(self):
+        pieceMap = []
         for x in range(8):
-            self._pieceMap.append([])
+            pieceMap.append([])
             for y in range(8):
                 if y == 1:
-                    self._pieceMap[x].append(
+                    pieceMap[x].append(
                         Pawn("black", False, Direction.UP))
                 elif y == 6:
-                    self._pieceMap[x].append(
+                    pieceMap[x].append(
                         Pawn("white", False, Direction.DOWN))
                 elif y == 0:
                     if(x == 1 or x == 6):
-                        self._pieceMap[x].append(
+                        pieceMap[x].append(
                             Knight("black", False))
                     elif x == 4:
-                        self._pieceMap[x].append(
+                        pieceMap[x].append(
                             King("black", True))
+                    elif x == 3:
+                        pieceMap[x].append(
+                            Queen("black", False))
+                    elif x == 2 or x == 5:
+                        pieceMap[x].append(
+                            Bishop("black", False))
                     elif(x == 0 or x == 7):
-                        self._pieceMap[x].append(
+                        pieceMap[x].append(
                             Rock("black", False))
                     else:
-                        self._pieceMap[x].append(None)
+                        pieceMap[x].append(None)
                 elif y == 7:
                     if(x == 1 or x == 6):
-                        self._pieceMap[x].append(
+                        pieceMap[x].append(
                             Knight("white", False))
                     elif x == 4:
-                        self._pieceMap[x].append(
+                        pieceMap[x].append(
                             King("white", True))
+                    elif x == 3:
+                        pieceMap[x].append(
+                            Queen("white", False))
+                    elif x == 2 or x == 5:
+                        pieceMap[x].append(
+                            Bishop("white", False))
                     elif(x == 0 or x == 7):
-                        self._pieceMap[x].append(
+                        pieceMap[x].append(
                             Rock("white", False))
                     else:
-                        self._pieceMap[x].append(None)
+                        pieceMap[x].append(None)
                 else:
-                    self._pieceMap[x].append(None)
+                    pieceMap[x].append(None)
+        return pieceMap
+
+    def __init__(self):
+        self._pieceMap = self._createChessBoard()
 
     def printMap(self):
         for y in range(self.boardSize[1]):
@@ -84,29 +103,49 @@ class GameBoard:
         return isThreatenend
 
     def movePiece(self, fromPos, toPos):
+        boardChange = self.getBoardChangeOfMove(fromPos, toPos)
+        if boardChange != None:
+            for move in boardChange:
+                self.setPiece(move[1], self.getPiece(move[0]))
+                self.setPiece(move[0], None)
+            return True
+        return False
+
+    def promotePiece(self, piecePos, promoteName):
+        oldPiece = self.getPiece(piecePos)
+        self.setPiece(piecePos, Queen(oldPiece.color, False))
+
+    def canPromote(self, pos):
+        piece = self.getPiece(pos)
+        if piece is None:
+            return False
+
+        if piece.canPromote(self.pieceMap, pos):
+            return True
+        else:
+            return False
+
+    # If move possible, returns boardChange, otherwise return None
+    def getBoardChangeOfMove(self, fromPos, toPos):
         piece = self.getPiece(fromPos)
         pieceAtToPos = self.getPiece(toPos)
         if piece is None:
-            return False
+            return None
         if piece.canMove(self.pieceMap, fromPos, toPos):
             self.setPiece(toPos, piece)
             self.setPiece(fromPos, None)
             if self._checkIfCheckmate(piece.color):
-                # Wenn Zug als Checkmate erkannt wird, wird er rückgäng gemacht.
                 self.setPiece(fromPos, piece)
                 self.setPiece(toPos, pieceAtToPos)
-                return False
-            return True
+                return None
+            self.setPiece(fromPos, piece)
+            self.setPiece(toPos, pieceAtToPos)
+            return [[fromPos, toPos]]
         specialMove = self.canSpecialMove(fromPos, toPos)
         if len(specialMove) != 0:
-
-            self.setPiece(toPos, self.getPiece(fromPos))
-            self.setPiece(fromPos, None)
-            self.setPiece(specialMove[1][1], self.getPiece(specialMove[1][0]))
-            self.setPiece(specialMove[1][0], None)
-            return True
+            return specialMove
         else:
-            return False
+            return None
 
     def getAllPossibleMoves(self, color):
         piecePosList = self._getPiecePositionsWithColor(color)

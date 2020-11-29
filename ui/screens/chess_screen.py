@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import font
+from tkinter import font, Canvas
 from PIL import ImageTk, Image
 
 from ui.screen import Screen
@@ -9,18 +9,36 @@ from models.game_manager import GameManager
 from models.game_board import GameBoard
 from ui.screens.chess_board import ChessBoard
 from ui.screens.status_bar import StatusBar
+from ui.screens.select_figure_frame import SelectFigureFrame
 
 
 class ChessScreen(Screen, IView):
     ROUTENAME = "/chess"
 
+    def create_rectangle(self, x1, y1, x2, y2, root, canvas, **kwargs):
+        images = []
+        if 'alpha' in kwargs:
+            alpha = int(kwargs.pop('alpha') * 255)
+            fill = kwargs.pop('fill')
+            fill = root.winfo_rgb(fill) + (alpha,)
+            image = Image.new('RGBA', (x2-x1, y2-y1), fill)
+            images.append(ImageTk.PhotoImage(image))
+            canvas.create_image(x1, y1, image=images[-1], anchor='nw')
+        canvas.create_rectangle(x1, y1, x2, y2, **kwargs)
+
+    def buttonClick(self):
+        self._screenManager.navigate("/")
+
     def initBuild(self):
-        self.gameController = GameController(self, GameManager(GameBoard()))
+        board = GameBoard()
+        gameManager = GameManager(board)
+        self.gameController = GameController(self, gameManager)
+        self.selectMenu = None
 
         self.screenFrame = Frame()
         self.screenFrame.place(relx=0, rely=0, width=1000, height=800)
 
-        self.statusBar = StatusBar(self.screenFrame)
+        self.statusBar = StatusBar(self.screenFrame, self.buttonClick)
         self.statusBar.place(relx=0, rely=0, width=200, height=800)
         self.chessBoard = ChessBoard(self.screenFrame, self.gameController)
         self.chessBoard.place(x=200, y=12, width=800, height=800)
@@ -29,12 +47,32 @@ class ChessScreen(Screen, IView):
 
     def clear(self):
         self.screenFrame.destroy()
+        del self.gameController
+        self.chessBoard.destroy()
+        self.statusBar.destroy()
 
-    def update(self):
-        if(self.gameController.getGameOver()):
+    def update(self, onlyClock= False):
+        self.statusBar.setTime(self.gameController.getTime())
+        if onlyClock:
+            return
+
+        if self.gameController.getIsPromoting():
+            if self.selectMenu == None:
+                self.selectMenu = SelectFigureFrame(self.screenFrame, self)
+                self.selectMenu.place(x=0, y= 0, width=1000, height=800)
+                return
+            else:
+                if self.selectMenu.selectedFigure != -1:
+                    self.gameController.promote("queen")
+                    self.selectMenu.destroy()
+                else:
+                    return
+            
+        if self.gameController.getGameOver():
             self._screenManager.navigate("/")
             return
-        self.chessBoard.updateBoard(self.gameController.getBoardState())
+        self.chessBoard.updateBoard(
+            self.gameController.getBoardState(), self.gameController.getCurrentPlayer())
         self.statusBar.setGameRound(self.gameController.getRoundNumber())
         currentPlayer = self.gameController.getCurrentPlayer()
         if(currentPlayer == "black"):

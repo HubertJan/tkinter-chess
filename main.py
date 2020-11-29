@@ -4,6 +4,8 @@ from controller.game_controller import GameController
 from controller.interface_view import IView
 from ui.screen_manager import ScreenManager
 
+import test
+
 #from helper.board_position import BoardPosition
 #from helper.board_state import BoardState
 

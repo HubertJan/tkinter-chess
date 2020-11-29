@@ -21,4 +21,4 @@ class King(Piece):
         return possibleMovePos
 
     def canPromote(self, pieceMap, currentPos):
-        return None
+        return False

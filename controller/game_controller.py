@@ -19,6 +19,9 @@ class GameController:
             else:
                 self._gameManager.unselectPiece()
                 self.view.update()
+    
+    def promote(self, pawnName):
+        self._gameManager.selectPromote(pawnName)
 
     def getBoardState(self):
         return self._gameManager.getBoardState()
@@ -31,3 +34,9 @@ class GameController:
     
     def getGameOver(self):
         return self._gameManager.isGameFinished()
+    
+    def getIsPromoting(self):
+        return self._gameManager.getIsPromoting()
+    
+    def getTime(self):
+        return self._gameManager.getTime()
