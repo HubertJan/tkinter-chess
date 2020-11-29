@@ -18,10 +18,23 @@ class ChessScreen(Screen, IView):
     ROUTENAME = "/chess"
 
     def buttonClick(self):
+
+        if self._isPaused == False:
+            self.statusBar.setTime(self.gameController.getTime())
+            self._isPaused = True
+            self.statusBar.setPauseButton(False)
+            self.gameController.pause()
+        else:
+            self._isPaused = False
+            self.statusBar.setPauseButton(True)
+            self.gameController.resume()
+
+    def buttonBackClick(self):
         self._screenManager.navigate("/")
 
     def initBuild(self, time):
         board = GameBoard()
+        self._isPaused = False
         gameManager = GameManager(board, time)
         self.gameController = GameController(self, gameManager)
         self.selectMenu = None
@@ -29,9 +42,11 @@ class ChessScreen(Screen, IView):
         self.screenFrame = Frame()
         self.screenFrame.place(relx=0, rely=0, width=1000, height=800)
 
-        self.statusBar = StatusBar(self.screenFrame, self.buttonClick)
+        self.statusBar = StatusBar(
+            self.screenFrame, self.buttonClick, self.buttonBackClick)
         self.statusBar.place(relx=0, rely=0, width=200, height=800)
-        self.chessBoard = ChessBoard(self.screenFrame, self.gameController, self._screenManager.imageHandler)
+        self.chessBoard = ChessBoard(
+            self.screenFrame, self.gameController, self._screenManager.imageHandler)
         self.chessBoard.place(x=200, y=12, width=800, height=800)
 
         threading.Timer(1, lambda: [
@@ -48,10 +63,11 @@ class ChessScreen(Screen, IView):
         self.statusBar.destroy()
 
     def update(self, onlyClock=False):
-        #If timer is still running after game is finished
+
+        # If timer is still running after game is finished
         if self.gameController == None:
             return
-            
+
         if self.gameController.getIsPromoting():
             if self.selectMenu == None:
                 self.selectMenu = SelectFigureFrame(self.screenFrame, self)

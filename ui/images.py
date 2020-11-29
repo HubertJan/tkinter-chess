@@ -46,4 +46,7 @@ class ImageHandler:
         img = Image.open("IMG/back.png")
         img = img.resize((40, 40), Image.ANTIALIAS)
         self.images["Back"] = ImageTk.PhotoImage(img)
+        img = Image.open("IMG/resume.png")
+        img = img.resize((40, 40), Image.ANTIALIAS)
+        self.images["Resume"] = ImageTk.PhotoImage(img)
 

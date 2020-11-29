@@ -4,7 +4,7 @@ from math import floor
 
 
 class StatusBar(Frame):
-    def __init__(self, master, onClick):
+    def __init__(self, master, onClick, onClickBack):
         super().__init__(master)
         LabelRoundHeadline = Label(
             master=self, text="Runde", fg="#265B78")
@@ -47,21 +47,31 @@ class StatusBar(Frame):
 
         self.arrowImage = ImageTk.PhotoImage(Image.open(
             "IMG/arrow.png").resize((85, 85)), Image.ANTIALIAS)
-        ButtonBack = Button(master=self, image=self.arrowImage,  borderwidth=0)
+        ButtonBack = Button(command=onClickBack, master=self, image=self.arrowImage,  borderwidth=0)
         ButtonBack.place(anchor="center", relx=0.5,
                          rely=0.78, width=85, height=85)
 
         self.pauseImage = ImageTk.PhotoImage(Image.open(
             "IMG/pause.png").resize((85, 85)), Image.ANTIALIAS)
-        ButtonPause = Button(master=self, image=self.pauseImage, borderwidth=0, command=onClick)
-        ButtonPause.place(anchor="center", relx=0.5,
-                          rely=0.9, width=85, height=85)
+        self.resumeImage = ImageTk.PhotoImage(Image.open(
+            "IMG/resume.png").resize((85, 85)), Image.ANTIALIAS)
+        self.ButtonPause = Button(
+            master=self, image=self.pauseImage, borderwidth=0, command=onClick)
+        self.ButtonPause.place(anchor="center", relx=0.5,
+                               rely=0.9, width=85, height=85)
 
     def setGameRound(self, gameRound):
         self.roundNumberLabel.config(text=gameRound)
 
     def setCurrentPlayer(self, txt, bgColor, fgColor):
         self.currentPlayerLabel.config(text=txt, fg=fgColor, bg=bgColor)
+
+    def setPauseButton(self, isPaused):
+
+        if isPaused:
+            self.ButtonPause.config(image= self.pauseImage)
+        else:
+            self.ButtonPause.config(image=self.resumeImage)
 
     def setTime(self, time):
         time = round(time)

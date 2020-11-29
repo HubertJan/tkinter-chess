@@ -19,10 +19,11 @@ class GameManager:
         self._playerList = []
         self._currentPlayerIndex = 0
         self._board = None
+        self._isPaused = False
 
         self._board = gameBoard
         self._playerList = ["white", "black"]
-        self._playerNameList = ["Weiß", "Schwarz"]
+        self._otherPlayerList = ["Schwarz" "Weiß"]
         self._selectedPiecePos = None
         self._isPromoting = False
         gameOverTime = time
@@ -35,6 +36,9 @@ class GameManager:
         self.turns.append([fromPos, toPos])
 
     def moveSelectedPiece(self, toPos: BoardPosition):
+        if self._isPaused == True:
+            return False
+
         if self.isGameFinished() != False:
             return False
         if self._selectedPiecePos is None:
@@ -50,15 +54,21 @@ class GameManager:
         return False
 
     def isGameFinished(self):
+        if self._isPaused == True:
+            return False
+
         if self._playerTimerList[self._currentPlayerIndex].getRemainingTime() <= 0:
-            return self._playerNameList[self._currentPlayerIndex] + " hat gewonnen."
+            return self._otherPlayerList[self._currentPlayerIndex] + " hat gewonnen."
         if self._board.isStalemate(self.currentPlayer):
             return "Unentschieden"
         if  self._board.canColorMove(self.currentPlayer) is False:
-            return self._playerNameList[self._currentPlayerIndex] + " hat gewonnen."
+            return self._otherPlayerList[self._currentPlayerIndex] + " hat gewonnen."
         return False
         
     def selectPiece(self, pos: BoardPosition):
+        if self._isPaused == True:
+            return False
+
         piece: Piece or None = self._board.getPiece(pos)
         if piece is None:
             return False
@@ -87,6 +97,14 @@ class GameManager:
             self._currentPlayerIndex += 1
         self._selectedPiecePos = None
 
+        self._playerTimerList[self._currentPlayerIndex].resume()
+    
+    def pause(self):
+        self._isPaused = True
+        self._playerTimerList[self._currentPlayerIndex].pause()
+
+    def resume(self):
+        self._isPaused = False
         self._playerTimerList[self._currentPlayerIndex].resume()
 
     @property

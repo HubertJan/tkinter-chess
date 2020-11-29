@@ -20,6 +20,12 @@ class GameController:
                 self._gameManager.unselectPiece()
                 self.view.update()
     
+    def pause(self):
+        self._gameManager.pause()
+
+    def resume(self):
+        self._gameManager.resume()
+        
     def promote(self, pawnName):
         self._gameManager.selectPromote(pawnName)
 
