@@ -10,7 +10,7 @@ from models.game_manager import GameManager
 from models.game_board import GameBoard
 from ui.frames.chess_board import ChessBoard
 from ui.frames.status_bar import StatusBar
-from ui.screens.select_figure_frame import SelectFigureFrame
+from ui.frames.select_figure_frame import SelectFigureFrame
 
 
 class ChessScreen(Screen, IView):

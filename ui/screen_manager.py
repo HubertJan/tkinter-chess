@@ -15,6 +15,7 @@ class ScreenManager:
         self.window.title("Ein Schach")
         self.window.geometry("1000x800")
 
+        # Jeder Scren wird mit ROUTENAME verknüpft
         self._screens = {StartScreen.ROUTENAME: StartScreen(self),
                          ChessScreen.ROUTENAME: ChessScreen(self),
                          SettingScreen.ROUTENAME: SettingScreen(self),
@@ -25,7 +26,7 @@ class ScreenManager:
         self.imageHandler = ImageHandler()
 
     def start(self):
-        self.navigate("/manual")
+        self.navigate("/") # Startmenü wird als erstes geöffnet
         self.window.mainloop()
 
     def navigate(self, screenRouteName, arg=None):
