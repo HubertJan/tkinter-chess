@@ -130,6 +130,4 @@ class GameManager:
         return self._isPromoting
 
     def getTime(self):
-        print(
-            self._playerTimerList[self._currentPlayerIndex].getRemainingTime())
         return self._playerTimerList[self._currentPlayerIndex].getRemainingTime()

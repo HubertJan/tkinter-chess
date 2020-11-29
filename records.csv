@@ -4,3 +4,5 @@ typeOfGame,time,rounds,winner
 0,3600,43,Schwarz
 0,60,10,Weiß
 0,60,24,Weiß
+0,600,6,Weiß
+0,60,1,Schwarz

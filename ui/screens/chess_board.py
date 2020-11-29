@@ -5,9 +5,6 @@ from helper.board_state import BoardState
 
 class ChessBoard(Frame):
 
-    def setBoard(self):
-        print()
-
     def clickField(self, x, y):
         self.gameController.clickField(x, y)
 

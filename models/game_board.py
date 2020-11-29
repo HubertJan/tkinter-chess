@@ -75,7 +75,6 @@ class GameBoard:
                     textLine += "X "
                 else:
                     textLine += piece.text + " "
-            print(textLine)
 
     def _checkIfCheckmate(self, color):
         kingPosList = []
@@ -197,9 +196,6 @@ class GameBoard:
         self.setPiece(toPos, pieceAtToPos)
         return isCheckmate
 
-    def changePiece(self, pos: BoardPosition, toPiece: Piece):
-        print("")
-
     def getPiece(self, pos: BoardPosition):
         return self.pieceMap[pos.X][pos.Y]
 
@@ -288,8 +284,6 @@ class GameBoard:
 
     def _getSpecialMovesOfPiece(self, pos):
         piece = self.getPiece(pos)
-        if piece.isKing:
-            print()
 
     def setPiece(self, boardPosition, piece):
         self._pieceMap[boardPosition.X][boardPosition.Y] = piece

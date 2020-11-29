@@ -11,6 +11,7 @@ class ScreenManager:
     def __init__(self):
         self.window = Tk()
         self.window.resizable(width=False, height=False)
+        self.window.title("Ein Schach")
         self.window.geometry("1000x800")
 
         self._screens = {StartScreen.ROUTENAME: StartScreen(self),
@@ -22,7 +23,7 @@ class ScreenManager:
         self.imageHandler = ImageHandler()
 
     def start(self):
-        self.navigate("/end", "Lol")
+        self.navigate("/")
         self.window.mainloop()
 
     def navigate(self, screenRouteName, arg=None):
