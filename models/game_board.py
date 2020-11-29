@@ -10,7 +10,6 @@ from models.pieces.bishop import Bishop
 
 class GameBoard:
 
-
     def _createChessBoard(self):
         pieceMap = []
         for x in range(8):
@@ -122,7 +121,14 @@ class GameBoard:
 
     def promotePiece(self, piecePos, promoteName):
         oldPiece = self.getPiece(piecePos)
-        self.setPiece(piecePos, Queen(oldPiece.color, False))
+        if promoteName == Queen.name:
+            self.setPiece(piecePos, Queen(oldPiece.color, False))
+        elif promoteName == Knight.name:
+            self.setPiece(piecePos, Knight(oldPiece.color, False))
+        elif promoteName == Bishop.name:
+            self.setPiece(piecePos, Bishop(oldPiece.color, False))
+        elif promoteName == Rock.name:
+            self.setPiece(piecePos, Rock(oldPiece.color, False))
 
     def canPromote(self, pos):
         piece = self.getPiece(pos)

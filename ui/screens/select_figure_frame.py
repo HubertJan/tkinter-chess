@@ -51,7 +51,7 @@ class SelectFigureFrame(Frame):
         img = img.resize((125, 125), Image.ANTIALIAS)
         self.images["Possible"] = ImageTk.PhotoImage(img)
 
-    def __init__(self, master, view):
+    def __init__(self, master, view, color):
         super().__init__(master)
         self.loadImages()
         self.view = view
@@ -72,25 +72,25 @@ class SelectFigureFrame(Frame):
         LabelChange.place(anchor="center", relx=0.5, rely=0.2)
 
         ButtonSelectKnight = Button(
-            master=FrameChange, image=self.images["knight"]["black"][0],  borderwidth=0, bg="#417D9E", activebackground="#417D9E",
+            master=FrameChange, image=self.images["knight"][color][0],  borderwidth=0, bg="#417D9E", activebackground="#417D9E",
             command=lambda:[ self._selectFigure(0)] )
         ButtonSelectKnight.place(
             anchor="center", relx=0.2, rely=0.6, width=125, height=125)
 
         ButtonSelectQueen = Button(
-            master=FrameChange, image=self.images["knight"]["black"][0],  borderwidth=0, bg="#417D9E", activebackground="#417D9E",
+            master=FrameChange, image=self.images["bishop"][color][0],  borderwidth=0, bg="#417D9E", activebackground="#417D9E",
             command=lambda:[ self._selectFigure(1)])
         ButtonSelectQueen.place(anchor="center", relx=0.4,
                                 rely=0.6, width=125, height=125)
 
         ButtonSelectRok = Button(
-            master=FrameChange, image=self.images["knight"]["black"][0],  borderwidth=0, bg="#417D9E", activebackground="#417D9E",
+            master=FrameChange, image=self.images["rock"][color][0],  borderwidth=0, bg="#417D9E", activebackground="#417D9E",
             command= lambda: self._selectFigure(2))
         ButtonSelectRok.place(anchor="center", relx=0.6,
                               rely=0.6, width=125, height=125)
 
         ButtonSelectBishop = Button(
-            master=FrameChange, image=self.images["knight"]["black"][0],  borderwidth=0, bg="#417D9E", activebackground="#417D9E",
+            master=FrameChange, image=self.images["queen"][color][0],  borderwidth=0, bg="#417D9E", activebackground="#417D9E",
             command=lambda : self._selectFigure(3))
         ButtonSelectBishop.place(
             anchor="center", relx=0.8, rely=0.6, width=125, height=125)

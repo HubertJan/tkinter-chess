@@ -16,6 +16,7 @@ from ui.screens.select_figure_frame import SelectFigureFrame
 
 class ChessScreen(Screen, IView):
     ROUTENAME = "/chess"
+    FIGURE_TO_TEXT = ["knight", "bishop", "rock", "queen"]
 
     def buttonBackClick(self):
         self._pause()
@@ -71,11 +72,17 @@ class ChessScreen(Screen, IView):
         self.update()
 
     def clear(self):
+        
+        self.chessBoard.destroy()
+        self.statusBar.destroy()
         self.screenFrame.destroy()
         del self.gameController
         self.gameController = None
-        self.chessBoard.destroy()
-        self.statusBar.destroy()
+
+    def timerFunc(self):
+        if self.gameController != None:
+            self.update(
+                onlyClock=True)
 
     def update(self, onlyClock=False):
 
@@ -85,16 +92,16 @@ class ChessScreen(Screen, IView):
 
         if self.gameController.getIsPromoting():
             if self.selectMenu == None:
-                self.selectMenu = SelectFigureFrame(self.screenFrame, self)
+                self.selectMenu = SelectFigureFrame( self.screenFrame, self, self.gameController.getCurrentPlayer())
                 self.selectMenu.place(x=0, y=0, width=1000, height=800)
                 return
             else:
                 if self.selectMenu.selectedFigure != -1:
-                    self.gameController.promote("queen")
-                    threading.Timer(1, lambda: [
-                        self.update(onlyClock=True)
-                    ]).start()
+                    self.gameController.promote(self.FIGURE_TO_TEXT[self.selectMenu.selectedFigure])
+                    threading.Timer(1, self.timerFunc).start()
                     self.selectMenu.destroy()
+                    del self.selectMenu
+                    self.selectMenu = None
                 else:
                     return
 

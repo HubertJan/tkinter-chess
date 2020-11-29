@@ -71,3 +71,4 @@ class Pawn(Piece):
            currentPos.Y == 0 and self.moveDir == Direction.DOWN):
             return True
         return False
+
