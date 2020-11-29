@@ -10,14 +10,16 @@ from helper.board_state import BoardState
 
 
 class GameManager:
-    currentRound = 0
-    turns = []
-    _playerList = []
-    _currentPlayerIndex = 0
-    _board = None
+   
 
     # Initialisiert auf welchen GameBoard gespielt wird.
     def __init__(self, gameBoard: GameBoard, time):
+        self. currentRound = 0
+        self.turns = []
+        self._playerList = []
+        self._currentPlayerIndex = 0
+        self._board = None
+
         self._board = gameBoard
         self._playerList = ["white", "black"]
         self._selectedPiecePos = None

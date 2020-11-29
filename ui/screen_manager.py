@@ -5,6 +5,7 @@ from ui.screens.start_screen import StartScreen
 from ui.screens.end_screen import EndScreen
 from ui.screens.statistic_screen import StatisticScreen
 from ui.screens.setting_screen import SettingScreen
+from ui.images import ImageHandler
 
 class ScreenManager:
     def __init__(self):
@@ -18,6 +19,7 @@ class ScreenManager:
                          EndScreen.ROUTENAME: EndScreen(self, "Schwarz hat gewonnen"),
                          StatisticScreen.ROUTENAME: StatisticScreen(self)}
         self._currentScreenRouteName = None
+        self.imageHandler = ImageHandler()
 
     def start(self):
         self.navigate("/end")

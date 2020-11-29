@@ -170,6 +170,9 @@ class GameBoard:
         piece = self.getPiece(fromPos)
         pieceAtToPos = self.getPiece(toPos)
 
+        if piece == None:
+            return False
+
         self.setPiece(toPos, piece)
         self.setPiece(fromPos, None)
         isCheckmate = self._checkIfCheckmate(piece.color)

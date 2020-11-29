@@ -17,17 +17,6 @@ from ui.screens.select_figure_frame import SelectFigureFrame
 class ChessScreen(Screen, IView):
     ROUTENAME = "/chess"
 
-    def create_rectangle(self, x1, y1, x2, y2, root, canvas, **kwargs):
-        images = []
-        if 'alpha' in kwargs:
-            alpha = int(kwargs.pop('alpha') * 255)
-            fill = kwargs.pop('fill')
-            fill = root.winfo_rgb(fill) + (alpha,)
-            image = Image.new('RGBA', (x2-x1, y2-y1), fill)
-            images.append(ImageTk.PhotoImage(image))
-            canvas.create_image(x1, y1, image=images[-1], anchor='nw')
-        canvas.create_rectangle(x1, y1, x2, y2, **kwargs)
-
     def buttonClick(self):
         self._screenManager.navigate("/")
 
@@ -42,7 +31,7 @@ class ChessScreen(Screen, IView):
 
         self.statusBar = StatusBar(self.screenFrame, self.buttonClick)
         self.statusBar.place(relx=0, rely=0, width=200, height=800)
-        self.chessBoard = ChessBoard(self.screenFrame, self.gameController)
+        self.chessBoard = ChessBoard(self.screenFrame, self.gameController, self._screenManager.imageHandler)
         self.chessBoard.place(x=200, y=12, width=800, height=800)
 
         threading.Timer(1, lambda: [
