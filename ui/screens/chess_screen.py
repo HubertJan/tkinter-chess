@@ -8,8 +8,8 @@ from controller.game_controller import GameController
 from controller.interface_view import IView
 from models.game_manager import GameManager
 from models.game_board import GameBoard
-from ui.screens.chess_board import ChessBoard
-from ui.screens.status_bar import StatusBar
+from ui.frames.chess_board import ChessBoard
+from ui.frames.status_bar import StatusBar
 from ui.screens.select_figure_frame import SelectFigureFrame
 
 
@@ -18,6 +18,7 @@ class ChessScreen(Screen, IView):
     FIGURE_TO_TEXT = ["knight", "bishop", "rock", "queen"]
 
     def buttonBackClick(self):
+        # Erstellt Fenster, um sicherzugehen ob Spieler wirklich Runde beenden will
         self._pause()
         response = messagebox.askquestion("Runde verlassen ", "Möchtest du die Runde wirklich verlassen?",
                                           icon='warning')
@@ -27,12 +28,14 @@ class ChessScreen(Screen, IView):
             self._resume()
 
     def _pause(self):
+        # Stoppt die Zeit, Spielfluß
         self.statusBar.setTime(self.gameController.getTime())
         self._isPaused = True
         self.statusBar.setPauseButton(False)
         self.gameController.pause()
 
     def _resume(self):
+        # Restartet die Zeit und Spielfluß
         self._isPaused = False
         self.statusBar.setPauseButton(True)
         self.gameController.resume()
@@ -90,10 +93,12 @@ class ChessScreen(Screen, IView):
 
         if self.gameController.getIsPromoting():
             if self.selectMenu == None:
+                #Erstellt Auswahlfenster für Promoting
                 self.selectMenu = SelectFigureFrame( self.screenFrame, self, self.gameController.getCurrentPlayer())
                 self.selectMenu.place(x=0, y=0, width=1000, height=800)
                 return
             else:
+                # Führt Promotion aus, löscht Promoting Fenster
                 if self.selectMenu.selectedFigure != -1:
                     self.gameController.promote(self.FIGURE_TO_TEXT[self.selectMenu.selectedFigure])
                     threading.Timer(1, self.timerFunc).start()
@@ -103,13 +108,15 @@ class ChessScreen(Screen, IView):
                 else:
                     return
 
-        self.statusBar.setTime(self.gameController.getTime())
+        self.statusBar.setTime(self.gameController.getTime()) #Zeitzähler wird aktuellisiert
         gameOver = self.gameController.getGameOver()
 
         if gameOver != False:
             self._screenManager.navigate("/end", gameOver)
             return
+
         if onlyClock:
+            #Startet process, der die Zeitzähler alle 1s aktuellisiert, neu
             threading.Timer(1, lambda: [
                 self.update(onlyClock=True)
             ]).start()

@@ -8,6 +8,8 @@ from models.pieces.king import King
 from models.pieces.queen import Queen
 
 class ImageHandler:
+    # Dient zum Laden aller Bilder
+    # Bilder können von hier aus aufgerufen werden
     def __init__(self):
         self._loadImages()
 

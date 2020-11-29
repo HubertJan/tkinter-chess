@@ -58,6 +58,9 @@ class GameManager:
         if self._isPaused == True:
             return False
 
+        # speichert das Spiel in die Datenbank ab und
+        # beendet das Spiel, wenn die Beedinungen erfüllt sind
+        # Entweder, wenn Zeit ausläuft, stealmate oder checkmate
         if self._playerTimerList[self._currentPlayerIndex].getRemainingTime() <= 0:
             self.addGameToDatabase(self._otherPlayerList[self._currentPlayerIndex])
             return self._otherPlayerList[self._currentPlayerIndex] + " hat gewonnen."
@@ -71,6 +74,8 @@ class GameManager:
         return False
 
     def selectPiece(self, pos: BoardPosition):
+        # Macht das Piece zum selectedPiece
+        # selectedPiece kann bewegt werden
         if self._isPaused:
             return False
 

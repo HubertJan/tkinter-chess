@@ -3,6 +3,7 @@ from helper.board_position import BoardPosition
 
 
 class BoardState:
+    # Wird genutzt um aktuellen Brettstand zusammenzufassen und dann in der UI darzustellen
     def __init__(self, gameBoard: GameBoard, selectedPiecePos):
         self.map = []
         selectedPiece = None

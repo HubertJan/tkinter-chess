@@ -3,6 +3,8 @@ from pathlib import Path
 
 
 class Database:
+    # Managt das Speichern und Auslesen der Statistik
+
     def __init__(self, databaseFileName):
         self._data = None
         dirpath = Path(__file__).cwd().as_posix()

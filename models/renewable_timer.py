@@ -1,7 +1,7 @@
 import time
 
 class RenewableTimer:
-
+    # Timer für die Spieluhr
     def __init__(self, duration):
         self.duration = duration
         self.cancel_time = None

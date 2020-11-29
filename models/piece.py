@@ -9,8 +9,8 @@ class Direction(Enum):
 
 class Piece(ABC):
     def __init__(self, color, isKing):
-        self.color = color
-        self.isKing = isKing
+        self.color = color #Playername which owns the piece
+        self.isKing = isKing #If king, piece is not allowed to die
         
 
     @property
@@ -24,9 +24,11 @@ class Piece(ABC):
 
     @abstractmethod
     def canMove(self, board, currentPos, toPos):
+        #Check if move is valid, if yes return true, otherwise false
         pass
 
     def _getPiece(self, pieceMap, pos):
+        #shortway to extract pieces from pieceMap through position
         return pieceMap[pos.X][pos.Y]
 
     @abstractmethod

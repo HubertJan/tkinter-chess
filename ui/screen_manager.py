@@ -29,6 +29,8 @@ class ScreenManager:
         self.window.mainloop()
 
     def navigate(self, screenRouteName, arg=None):
+        # wechsel den Screen
+        # kann Argumente an die Screen weitergeben
         if(self._currentScreenRouteName != None):
             self._screens[self._currentScreenRouteName].clear()
         if arg == None:

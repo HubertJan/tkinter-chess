@@ -66,17 +66,8 @@ class GameBoard:
         self.boardSize = [8, 8]
         self._pieceMap = self._createChessBoard()
 
-    def printMap(self):
-        for y in range(self.boardSize[1]):
-            textLine = ""
-            for x in range(self.boardSize[0]):
-                piece = self.pieceMap[x][y]
-                if self.pieceMap[x][y] is None:
-                    textLine += "X "
-                else:
-                    textLine += piece.text + " "
-
     def _checkIfCheckmate(self, color):
+        # checkt ob der king von color attackiert wird
         kingPosList = []
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
@@ -91,6 +82,7 @@ class GameBoard:
         return isCheckmate
 
     def _isThreatenend(self, pos, ignoreColor=""):
+        # Gibt True aus, wenn es von irgendeinen anderen Piece angegriffen wird, außer von Pieces mit ignoreColor
         isThreatenend = False
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
@@ -102,6 +94,7 @@ class GameBoard:
         return isThreatenend
 
     def isStalemate(self, color):
+        # Gibt True aus, wenn keine Piece mit color sich bewegen können, aber der König nicht attackiert wird
         if self.canColorMove(color):
             return False
 
@@ -119,6 +112,7 @@ class GameBoard:
         return False
 
     def promotePiece(self, piecePos, promoteName):
+        # Piece auf piecePos wird mit anderen Piece, abhängig von promoteName ersetzt
         oldPiece = self.getPiece(piecePos)
         if promoteName == Queen.name:
             self.setPiece(piecePos, Queen(oldPiece.color, False))
@@ -130,6 +124,7 @@ class GameBoard:
             self.setPiece(piecePos, Rock(oldPiece.color, False))
 
     def canPromote(self, pos):
+        # checkt abhängig vom Piece Type, ob das Piece promote werden darf
         piece = self.getPiece(pos)
         if piece is None:
             return False
@@ -214,6 +209,8 @@ class GameBoard:
         moves += (self._getCastlingMoves())
         return moves
 
+    # checkt ob der Move ein Special move ist, also castling ist, wenn ja dann gibt er die boardChange aus,
+    # wenn nein, dann return []
     def canSpecialMove(self, fromPos, toPos):
         moves = self._getSpecialMoves()
         possibleMove = []
