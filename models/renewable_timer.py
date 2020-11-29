@@ -1,37 +1,22 @@
-from threading import Timer
 import time
-
 
 class RenewableTimer:
 
-    def __init__(self, timeout, callback):
-        self.timer = Timer(timeout, callback)
-
-        self.start_time = None
+    def __init__(self, duration):
+        self.duration = duration
         self.cancel_time = None
 
-        self.timeout = timeout
-        self.callback = callback
-
-    def cancel(self):
-        self.timer.cancel()
-
     def start(self):
-        self.start_time = time.time()
-        self.timer.start()
+        self.startTime = time.time()
 
     def pause(self):
-        self.cancel_time = time.time()
-        self.timer.cancel()
-        return self.get_remaining_time()
+        self.duration = self.getRemainingTime()
+        self.startTime = None
 
     def resume(self):
-        self.timeout = self.get_remaining_time()
-        self.timer = Timer(self.timeout, self.callback)
-        self.start_time = time.time()
-        self.timer.start()
+        self.startTime = time.time()
 
-    def get_remaining_time(self):
-        if self.start_time is None or self.cancel_time is None:
-            return self.timeout
-        return self.timeout - (self.cancel_time - self.start_time)
+    def getRemainingTime(self):
+        if self.startTime == None:
+            return self.duration
+        return self.duration - (time.time() - self.startTime)

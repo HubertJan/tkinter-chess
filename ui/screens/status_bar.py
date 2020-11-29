@@ -1,5 +1,6 @@
 from tkinter import Frame, Label, font, Button
 from PIL import ImageTk, Image
+from math import floor
 
 
 class StatusBar(Frame):
@@ -63,4 +64,7 @@ class StatusBar(Frame):
         self.currentPlayerLabel.config(text=txt, fg=fgColor, bg=bgColor)
 
     def setTime(self, time):
-        self.timerLabel.config(text=str(time/1000))
+        time = round(time)
+        if time <= 0:
+            time = 0
+        self.timerLabel.config(text=str(time))

@@ -22,8 +22,25 @@ class Pawn(Piece):
                 x2 = currentPos.X
                 y1 = currentPos.Y
                 y2 = toPos.Y
+            if currentPos.Y == 1:
+                p = self._getPiece(pieceMap, BoardPosition(
+                    currentPos.X, currentPos.Y + 1))
+                if p == None:
+                    moveDistance = 2
+                else:
+                    moveDistance = 1
+            elif currentPos.Y == 6:
+                p = self._getPiece(pieceMap, BoardPosition(
+                    currentPos.X, currentPos.Y - 1))
+                if p == None:
+                    moveDistance = 2
+                else:
+                    moveDistance = 1
+            else:
+                moveDistance = 1
+
             if(x1 is x2 and
-               (y1 - y2 >= 0 and y1 - y2 <= 2)):
+               (y1 - y2 >= 0 and y1 - y2 <= moveDistance)):
                 return True
         elif pieceAtTo.color != self.color:
             if self.moveDir == Direction.UP:
@@ -52,5 +69,5 @@ class Pawn(Piece):
     def canPromote(self, pieceMap, currentPos):
         if(currentPos.Y == 7 and self.moveDir == Direction.UP or
            currentPos.Y == 0 and self.moveDir == Direction.DOWN):
-           return True
+            return True
         return False

@@ -22,8 +22,8 @@ class GameManager:
         self._playerList = ["white", "black"]
         self._selectedPiecePos = None
         self._isPromoting = False
-        gameOverTime = 900000
-        self._playerTimerList = [RenewableTimer(gameOverTime, lambda :[]),RenewableTimer(gameOverTime, lambda :[])]
+        gameOverTime = 15
+        self._playerTimerList = [RenewableTimer(gameOverTime),RenewableTimer(gameOverTime)]
         self._playerTimerList[self._currentPlayerIndex].start()
         self._playerTimerList[1].start()
         self._playerTimerList[1].pause()
@@ -47,7 +47,7 @@ class GameManager:
         return False
 
     def isGameFinished(self):
-        if self._playerTimerList[0].get_remaining_time() <= 0:
+        if self._playerTimerList[self._currentPlayerIndex].getRemainingTime() <= 0:
             return True
         return self._board.canColorMove(self.currentPlayer) is False
 
@@ -100,4 +100,5 @@ class GameManager:
         return self._isPromoting
     
     def getTime(self):
-        return self._playerTimerList[self._currentPlayerIndex].get_remaining_time()
+        print( self._playerTimerList[self._currentPlayerIndex].getRemainingTime())
+        return self._playerTimerList[self._currentPlayerIndex].getRemainingTime()

@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import font, Canvas
 from PIL import ImageTk, Image
+import time
+import threading
 
 from ui.screen import Screen
 from controller.game_controller import GameController
@@ -43,34 +45,53 @@ class ChessScreen(Screen, IView):
         self.chessBoard = ChessBoard(self.screenFrame, self.gameController)
         self.chessBoard.place(x=200, y=12, width=800, height=800)
 
+        threading.Timer(1, lambda: [
+            self.update(onlyClock=True)
+        ]).start()
+
         self.update()
 
     def clear(self):
         self.screenFrame.destroy()
         del self.gameController
+        self.gameController = None
         self.chessBoard.destroy()
         self.statusBar.destroy()
 
-    def update(self, onlyClock= False):
-        self.statusBar.setTime(self.gameController.getTime())
-        if onlyClock:
+    def update(self, onlyClock=False):
+        #If timer is still running after game is finished
+        if self.gameController == None:
             return
-
+            
         if self.gameController.getIsPromoting():
             if self.selectMenu == None:
                 self.selectMenu = SelectFigureFrame(self.screenFrame, self)
-                self.selectMenu.place(x=0, y= 0, width=1000, height=800)
+                self.selectMenu.place(x=0, y=0, width=1000, height=800)
                 return
             else:
                 if self.selectMenu.selectedFigure != -1:
                     self.gameController.promote("queen")
+                    threading.Timer(1, lambda: [
+                        self.update(onlyClock=True)
+                    ]).start()
                     self.selectMenu.destroy()
                 else:
                     return
-            
+
+        self.statusBar.setTime(self.gameController.getTime())
         if self.gameController.getGameOver():
             self._screenManager.navigate("/")
             return
+        if onlyClock:
+            threading.Timer(1, lambda: [
+                self.update(onlyClock=True)
+            ]).start()
+            return
+
+        if self.gameController.getGameOver():
+            self._screenManager.navigate("/")
+            return
+
         self.chessBoard.updateBoard(
             self.gameController.getBoardState(), self.gameController.getCurrentPlayer())
         self.statusBar.setGameRound(self.gameController.getRoundNumber())
