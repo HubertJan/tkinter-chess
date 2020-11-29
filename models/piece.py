@@ -30,5 +30,5 @@ class Piece(ABC):
         return pieceMap[pos.X][pos.Y]
 
     @abstractmethod
-    def canPromote(self):
+    def canPromote(self, pieceMap, currentPos):
         pass

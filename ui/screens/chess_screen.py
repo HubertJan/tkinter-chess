@@ -31,9 +31,9 @@ class ChessScreen(Screen, IView):
     def buttonClick(self):
         self._screenManager.navigate("/")
 
-    def initBuild(self):
+    def initBuild(self, time):
         board = GameBoard()
-        gameManager = GameManager(board)
+        gameManager = GameManager(board, time)
         self.gameController = GameController(self, gameManager)
         self.selectMenu = None
 

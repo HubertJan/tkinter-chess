@@ -17,12 +17,12 @@ class GameManager:
     _board = None
 
     # Initialisiert auf welchen GameBoard gespielt wird.
-    def __init__(self, gameBoard: GameBoard):
+    def __init__(self, gameBoard: GameBoard, time):
         self._board = gameBoard
         self._playerList = ["white", "black"]
         self._selectedPiecePos = None
         self._isPromoting = False
-        gameOverTime = 15
+        gameOverTime = time
         self._playerTimerList = [RenewableTimer(gameOverTime),RenewableTimer(gameOverTime)]
         self._playerTimerList[self._currentPlayerIndex].start()
         self._playerTimerList[1].start()
