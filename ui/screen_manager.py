@@ -5,6 +5,7 @@ from ui.screens.start_screen import StartScreen
 from ui.screens.end_screen import EndScreen
 from ui.screens.statistic_screen import StatisticScreen
 from ui.screens.setting_screen import SettingScreen
+from ui.screens.manual_screen import ManualScreen
 from ui.images import ImageHandler
 
 class ScreenManager:
@@ -18,12 +19,13 @@ class ScreenManager:
                          ChessScreen.ROUTENAME: ChessScreen(self),
                          SettingScreen.ROUTENAME: SettingScreen(self),
                          EndScreen.ROUTENAME: EndScreen(self),
+                         ManualScreen.ROUTENAME: ManualScreen(self),
                          StatisticScreen.ROUTENAME: StatisticScreen(self)}
         self._currentScreenRouteName = None
         self.imageHandler = ImageHandler()
 
     def start(self):
-        self.navigate("/")
+        self.navigate("/manual")
         self.window.mainloop()
 
     def navigate(self, screenRouteName, arg=None):

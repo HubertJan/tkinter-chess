@@ -12,6 +12,9 @@ class StartScreen(Screen):
     def clickStats(self):
         self._screenManager.navigate("/stats")
 
+    def clickManual(self):
+        self._screenManager.navigate("/manual")
+
     def initBuild(self):
         self.LabelGame = Label(text="Ein Schach",
                                fg="#265B78")
@@ -29,7 +32,7 @@ class StartScreen(Screen):
         self.ButtonPlay["font"] = font.Font(
             family='Arial', size=20, weight='bold')
         self.ButtonPlay.place(anchor="center", relx=0.5,
-                              rely=0.5, width=210, height=80)
+                              rely=0.4, width=210, height=80)
 
         self.buttonStats = Button(text="Letzte Spiele",
                                   command=self.clickStats,
@@ -41,7 +44,19 @@ class StartScreen(Screen):
         self.buttonStats["font"] = font.Font(
             family='Arial', size=20, weight='bold')
         self.buttonStats.place(anchor="center", relx=0.5,
-                               rely=0.7, width=210, height=80)
+                               rely=0.6, width=210, height=80)
+
+        self.buttonManual = Button(text="Anleitung",
+                                   command=self.clickManual,
+                                   bg="#265B78",
+                                   activebackground="#265B78",
+                                   fg="#ffffff",
+                                   activeforeground="#ffffff",
+                                   borderwidth=0)
+        self.buttonManual["font"] = font.Font(
+            family='Arial', size=20, weight='bold')
+        self.buttonManual.place(anchor="center", relx=0.5,
+                                rely=0.8, width=210, height=80)
 
     def clear(self):
         self.LabelGame.destroy()
