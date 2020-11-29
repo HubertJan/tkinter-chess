@@ -7,7 +7,7 @@ class StatisticScreen(Screen):
     ROUTENAME = "/stats"
 
     def clickButton(self):
-        self._screenManager.navigate("/chess")
+        self._screenManager.navigate("/stats")
 
     def initBuild(self):
         self.frame = Frame(width=1000, height=800)

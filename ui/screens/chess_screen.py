@@ -68,17 +68,15 @@ class ChessScreen(Screen, IView):
                     return
 
         self.statusBar.setTime(self.gameController.getTime())
-        if self.gameController.getGameOver():
-            self._screenManager.navigate("/")
+        gameOver = self.gameController.getGameOver()
+
+        if gameOver != False:
+            self._screenManager.navigate("/end", gameOver)
             return
         if onlyClock:
             threading.Timer(1, lambda: [
                 self.update(onlyClock=True)
             ]).start()
-            return
-
-        if self.gameController.getGameOver():
-            self._screenManager.navigate("/")
             return
 
         self.chessBoard.updateBoard(

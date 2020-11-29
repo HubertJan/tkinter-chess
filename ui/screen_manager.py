@@ -16,13 +16,13 @@ class ScreenManager:
         self._screens = {StartScreen.ROUTENAME: StartScreen(self),
                          ChessScreen.ROUTENAME: ChessScreen(self),
                          SettingScreen.ROUTENAME: SettingScreen(self),
-                         EndScreen.ROUTENAME: EndScreen(self, "Schwarz hat gewonnen"),
+                         EndScreen.ROUTENAME: EndScreen(self),
                          StatisticScreen.ROUTENAME: StatisticScreen(self)}
         self._currentScreenRouteName = None
         self.imageHandler = ImageHandler()
 
     def start(self):
-        self.navigate("/end")
+        self.navigate("/end", "Lol")
         self.window.mainloop()
 
     def navigate(self, screenRouteName, arg=None):

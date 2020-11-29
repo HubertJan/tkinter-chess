@@ -6,18 +6,15 @@ from ui.screen import Screen
 class EndScreen(Screen):
     ROUTENAME = "/end"
 
-    def __init__(self, screenManager, text):
-        super().__init__(screenManager)
-        self.text = text
-
     def clickButton(self):
         self._screenManager.navigate("/")
 
-    def initBuild(self):
+    def initBuild(self, txt):
+        
         self.frame = Frame(width=1000, height=800)
         self.frame.place(x=0, y=0)
 
-        self.LabelEnd = Label(master=self.frame, text=self.text, fg="#417D9E")
+        self.LabelEnd = Label(master=self.frame, text=txt, fg="#417D9E")
         self.LabelEnd["font"] = font.Font(family='Arial', size=50, weight='bold')
         self.LabelEnd.place(anchor="center", relx=0.5, rely=0.1)
         

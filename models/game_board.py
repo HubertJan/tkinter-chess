@@ -102,6 +102,14 @@ class GameBoard:
                         isThreatenend = True
         return isThreatenend
 
+    def isStalemate(self, color):
+        if self.canColorMove(color):
+            return False
+
+        if self._checkIfCheckmate(color):
+            return False
+        return True
+
     def movePiece(self, fromPos, toPos):
         boardChange = self.getBoardChangeOfMove(fromPos, toPos)
         if boardChange != None:
@@ -158,6 +166,8 @@ class GameBoard:
 
     def getAllPossibleMovePosOfPiece(self, piecePos):
         piece = self.getPiece(piecePos)
+        if piece == None:
+            return []
         movePosList = piece.allPossibleMoves(self.pieceMap, piecePos)
 
         possibleMovePos = []
