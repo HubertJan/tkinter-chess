@@ -6,14 +6,12 @@ from models.game_board import GameBoard
 from models.piece import Piece
 from helper.board_position import BoardPosition
 from helper.board_state import BoardState
-
-
+from database import Database
 
 class GameManager:
-   
-
     # Initialisiert auf welchen GameBoard gespielt wird.
     def __init__(self, gameBoard: GameBoard, time):
+        self.database = Database("/records.csv")
         self. currentRound = 0
         self.turns = []
         self._playerList = []
@@ -23,11 +21,11 @@ class GameManager:
 
         self._board = gameBoard
         self._playerList = ["white", "black"]
-        self._otherPlayerList = ["Schwarz" "Weiß"]
+        self._otherPlayerList = ["Schwarz", "Weiß"]
         self._selectedPiecePos = None
         self._isPromoting = False
-        gameOverTime = time
-        self._playerTimerList = [RenewableTimer(gameOverTime),RenewableTimer(gameOverTime)]
+        self.gameOverTime = time
+        self._playerTimerList = [RenewableTimer(time), RenewableTimer(time)]
         self._playerTimerList[self._currentPlayerIndex].start()
         self._playerTimerList[1].start()
         self._playerTimerList[1].pause()
@@ -53,18 +51,25 @@ class GameManager:
             return True
         return False
 
+    def addGameToDatabase(self, winner):
+        self.database.addRecord(0, self.gameOverTime, len(self.turns) + 1, winner)
+
     def isGameFinished(self):
         if self._isPaused == True:
             return False
 
         if self._playerTimerList[self._currentPlayerIndex].getRemainingTime() <= 0:
+            self.addGameToDatabase(self._otherPlayerList[self._currentPlayerIndex])
             return self._otherPlayerList[self._currentPlayerIndex] + " hat gewonnen."
         if self._board.isStalemate(self.currentPlayer):
+            self.addGameToDatabase("draw")
             return "Unentschieden"
-        if  self._board.canColorMove(self.currentPlayer) is False:
+        if self._board.canColorMove(self.currentPlayer) is False:
+            self.addGameToDatabase(
+                self._otherPlayerList[self._currentPlayerIndex])
             return self._otherPlayerList[self._currentPlayerIndex] + " hat gewonnen."
         return False
-        
+
     def selectPiece(self, pos: BoardPosition):
         if self._isPaused == True:
             return False
@@ -76,11 +81,11 @@ class GameManager:
             return False
         self._selectedPiecePos = pos
         return True
-    
+
     def selectPromote(self, pieceName):
         if self._isPromoting == False:
             return
-        
+
         self._board.promotePiece(self._selectedPiecePos, pieceName)
         self._isPromoting = False
         self._endTurn()
@@ -98,7 +103,7 @@ class GameManager:
         self._selectedPiecePos = None
 
         self._playerTimerList[self._currentPlayerIndex].resume()
-    
+
     def pause(self):
         self._isPaused = True
         self._playerTimerList[self._currentPlayerIndex].pause()
@@ -107,23 +112,24 @@ class GameManager:
         self._isPaused = False
         self._playerTimerList[self._currentPlayerIndex].resume()
 
-    @property
+    @ property
     def currentPlayer(self):
         return self._playerList[self._currentPlayerIndex]
 
-    @property
+    @ property
     def isPieceSelected(self):
         return self._selectedPiecePos is not None
 
     def getBoardState(self):
         return BoardState(deepcopy(self._board), self._selectedPiecePos)
-    
+
     def getRoundNumber(self):
         return floor(len(self.turns)/len(self._playerList)) + 1
-    
+
     def getIsPromoting(self):
         return self._isPromoting
-    
+
     def getTime(self):
-        print( self._playerTimerList[self._currentPlayerIndex].getRemainingTime())
+        print(
+            self._playerTimerList[self._currentPlayerIndex].getRemainingTime())
         return self._playerTimerList[self._currentPlayerIndex].getRemainingTime()

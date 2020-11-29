@@ -77,4 +77,8 @@ class StatusBar(Frame):
         time = round(time)
         if time <= 0:
             time = 0
-        self.timerLabel.config(text=str(time))
+
+        try:
+            self.timerLabel.config(text=str(time))
+        except:
+            print("Label dead")

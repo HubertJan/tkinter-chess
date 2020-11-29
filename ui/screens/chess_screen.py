@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import font, Canvas
+from tkinter import font, Canvas,  messagebox
 from PIL import ImageTk, Image
 import time
 import threading
@@ -17,19 +17,34 @@ from ui.screens.select_figure_frame import SelectFigureFrame
 class ChessScreen(Screen, IView):
     ROUTENAME = "/chess"
 
-    def buttonClick(self):
-
-        if self._isPaused == False:
-            self.statusBar.setTime(self.gameController.getTime())
-            self._isPaused = True
-            self.statusBar.setPauseButton(False)
-            self.gameController.pause()
-        else:
-            self._isPaused = False
-            self.statusBar.setPauseButton(True)
-            self.gameController.resume()
-
     def buttonBackClick(self):
+        self._pause()
+        response = messagebox.askquestion("Runde verlassen ", "Möchtest du die Runde wirklich verlassen?",
+                                          icon='warning')
+        print(response)
+        if response == "yes":
+            self.goBack()
+        else:
+            self._resume()
+
+    def _pause(self):
+        self.statusBar.setTime(self.gameController.getTime())
+        self._isPaused = True
+        self.statusBar.setPauseButton(False)
+        self.gameController.pause()
+
+    def _resume(self):
+        self._isPaused = False
+        self.statusBar.setPauseButton(True)
+        self.gameController.resume()
+
+    def buttonClick(self):
+        if self._isPaused == False:
+            self._pause()
+        else:
+            self._resume()
+
+    def goBack(self):
         self._screenManager.navigate("/")
 
     def initBuild(self, time):

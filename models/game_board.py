@@ -9,8 +9,7 @@ from models.pieces.bishop import Bishop
 
 
 class GameBoard:
-    _pieceMap = []
-    boardSize = [8, 8]
+
 
     def _createChessBoard(self):
         pieceMap = []
@@ -64,6 +63,8 @@ class GameBoard:
         return pieceMap
 
     def __init__(self):
+        self._pieceMap = []
+        self.boardSize = [8, 8]
         self._pieceMap = self._createChessBoard()
 
     def printMap(self):

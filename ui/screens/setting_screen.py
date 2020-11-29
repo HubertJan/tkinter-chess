@@ -26,7 +26,7 @@ class SettingScreen(Screen):
 
     def initBuild(self):
         self.time = None
-        self.INDEX_TIME_LIST = [60, 600, 3600]
+        self.INDEX_TIME_LIST = [2, 600, 3600]
         self.frame = Frame(width=1000, height=800)
         self.frame.place(x=0, y=0)
         LabelCreate = Label(master=self.frame,
