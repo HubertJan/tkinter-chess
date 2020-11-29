@@ -21,7 +21,6 @@ class ChessScreen(Screen, IView):
         self._pause()
         response = messagebox.askquestion("Runde verlassen ", "Möchtest du die Runde wirklich verlassen?",
                                           icon='warning')
-        print(response)
         if response == "yes":
             self.goBack()
         else:
