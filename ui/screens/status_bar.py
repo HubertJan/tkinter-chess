@@ -1,6 +1,5 @@
 from tkinter import Frame, Label, font, Button
 from PIL import ImageTk, Image
-from math import floor
 
 
 class StatusBar(Frame):
@@ -47,7 +46,8 @@ class StatusBar(Frame):
 
         self.arrowImage = ImageTk.PhotoImage(Image.open(
             "IMG/arrow.png").resize((85, 85)), Image.ANTIALIAS)
-        ButtonBack = Button(command=onClickBack, master=self, image=self.arrowImage,  borderwidth=0)
+        ButtonBack = Button(command=onClickBack, master=self,
+                            image=self.arrowImage,  borderwidth=0)
         ButtonBack.place(anchor="center", relx=0.5,
                          rely=0.78, width=85, height=85)
 
@@ -69,7 +69,7 @@ class StatusBar(Frame):
     def setPauseButton(self, isPaused):
 
         if isPaused:
-            self.ButtonPause.config(image= self.pauseImage)
+            self.ButtonPause.config(image=self.pauseImage)
         else:
             self.ButtonPause.config(image=self.resumeImage)
 
@@ -78,7 +78,5 @@ class StatusBar(Frame):
         if time <= 0:
             time = 0
 
-        try:
+        if self.timerLabel != None:
             self.timerLabel.config(text=str(time))
-        except:
-            print("Label dead")

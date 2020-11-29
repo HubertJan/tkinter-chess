@@ -2,14 +2,6 @@ from tkinter import Frame, Button
 from PIL import ImageTk, Image
 
 from helper.board_state import BoardState
-from models.pieces.pawn import Pawn
-from models.pieces.knight import Knight
-from models.pieces.rock import Rock
-from models.pieces.bishop import Bishop
-from models.pieces.king import King
-from models.pieces.queen import Queen
-from controller.game_controller import GameController
-
 
 class ChessBoard(Frame):
 

@@ -51,9 +51,9 @@ class Queen(Piece):
             p1 = pos1.Y
             p2 = pos2.Y
 
-        if(p1 < p2):
+        if p1 < p2:
             stepSize = 1
-        elif(p1 > p2):
+        elif p1 > p2:
             stepSize = -1
         else:
             return False

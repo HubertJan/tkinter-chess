@@ -71,7 +71,7 @@ class GameManager:
         return False
 
     def selectPiece(self, pos: BoardPosition):
-        if self._isPaused == True:
+        if self._isPaused:
             return False
 
         piece: Piece or None = self._board.getPiece(pos)

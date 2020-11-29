@@ -1,5 +1,4 @@
-from tkinter import *
-from tkinter import font, Canvas,  messagebox
+from tkinter import font, Canvas,  messagebox, Frame
 from PIL import ImageTk, Image
 import time
 import threading
