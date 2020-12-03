@@ -23,6 +23,8 @@ class GameBoard:
         return self._pieceMap[:]
 
     def movePiece(self, fromPos: BoardPosition, toPos: BoardPosition) -> bool:
+        """ It get the move that fits to the BoardChange and execute the change.    
+        """
         move = self.getValidMove(fromPos, toPos)
         if move is not None:
             self.executeChange(move.triggerChange)
@@ -32,13 +34,23 @@ class GameBoard:
         return False
 
     def executeChange(self, change: BoardChange):
+        "" It execute the change by moving the pieces from toPos to fromPos
+        ""
         self.setPiece(change.toPos, self.getPiece(change.fromPos))
         self.setPiece(change.fromPos, None)
 
 
 
     def promotePiece(self, piecePos: BoardPosition, promoteName: str):
-        # Piece auf piecePos wird mit anderen Piece, abhängig von promoteName ersetzt
+        """ It changes the type of piece that is on the piecePos.
+        Args:
+            piecePos: position of the piece that's supposed to change
+            promoteName: name of piece that it is supposed to change to
+        Returns:
+            void
+        
+        Warning: As promoteName are only Queen, Knight, Bishop and Rock .name supported
+        """
         oldPiece = self.getPiece(piecePos)
         
         if promoteName == Queen.name:
@@ -51,7 +63,10 @@ class GameBoard:
             self.setPiece(piecePos, Rock(oldPiece.color, False))
 
     def canPromote(self, pos):
-        # checkt abhängig vom Piece Type, ob das Piece promote werden darf
+        """ It checks if piece at pos is atm able to promote
+        Returns:
+            if able True, if not False
+        """
         piece = self.getPiece(pos)
         if piece is None:
             return False
@@ -65,6 +80,12 @@ class GameBoard:
         return self.getValidMovesByColor(color) != []
 
     def isInCheck(self, color: str) -> bool:
+        """ It checks if any king of color is in check
+        Args:
+            color: Player.name of player that has to be ckec if is in check
+        Return:
+            If is in check or not.
+        """
         kingPosList = []
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
@@ -79,6 +100,12 @@ class GameBoard:
         return isInCheck
 
     def _isMoveCheck(self, move: BoardMove) -> bool:
+        """ It checks if Player is in check after the same player executed move
+        Args:
+            move: move that is going to be checked
+        Returns:
+            If Player is in check after move or not
+        """
         fromPos = move.triggerChange.fromPos
         toPos = move.triggerChange.toPos
 
@@ -96,7 +123,13 @@ class GameBoard:
         return isCheck
 
     def _canBeTaken(self, pos: BoardPosition, ignoreColor=""):
-        # Gibt True aus, wenn es von irgendeinen anderen Piece angegriffen wird, außer von Pieces mit ignoreColor
+        """ It checks if pos can be taken by any piece (or any piece but ignoreColor), if they would be able to move right now.
+        Args:
+            pos: Position to check if can be taken
+            ignoreColor: Player.name of player who's pieces should be ignored
+        Return:
+            If can be taken or not
+        """
         isThreatenend = False
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
@@ -108,7 +141,8 @@ class GameBoard:
         return isThreatenend
 
     def isStalemate(self, color: str) -> bool:
-        # Gibt True aus, wenn keine Piece mit color sich bewegen können, aber der König nicht attackiert wird
+        """ Checks if player of color can move at the moment
+        """
         if self.canColorMove(color):
             return False
 
@@ -117,6 +151,8 @@ class GameBoard:
         return True
 
     def getValidMove(self, piecePos, toPos) -> BoardMove:
+        """ Return any valid move, including usual and odd moves, that can be played from piecePos to toPOs
+        """
         moves = self.getValidMoves(piecePos)
 
         for move in moves:
@@ -125,6 +161,8 @@ class GameBoard:
         return None
 
     def getValidMoves(self, piecePos) -> list[BoardMove]:
+        """ Returns any valid move that can be player from piecePos
+        """
         piece = self.getPiece(piecePos)
         if piece is None:
             return []
@@ -137,12 +175,20 @@ class GameBoard:
         return moves
 
     def getValidMovesByColor(self, color) -> list[BoardMove]:
+        """ Returns any valid move that player with color can play
+        """
         piecePos = self._getAllPiecePosOfColor(color)
         moves = []
         for pos in piecePos:
             moves += self.getValidMoves(pos)
         return moves
 
+    """
+        A usual move is basically any move that isn't castling. It is always returned from a Piece Object and always only moves one piece at the time
+        
+        A odd move is, at the moment, any castling move. It is a move that can contain multiple piece movements and is calculated by the GameBoard Object itself.
+    """
+    
     def getUsualMove(self, piecePos, toPos) -> list[BoardMove]:
         moves = self.getUsualMoves(piecePos)
 
@@ -230,7 +276,14 @@ class GameBoard:
                         return boardMove
         return None
 
-    def _canAnyBeTaken(self, posList, ignoreColor=""):
+    def _canAnyBeTaken(self, posList: list[BoardPosition], ignoreColor=""):
+        """Checks if any piece that is at any position from the posList, can be taken by any piece ( or any piece but piece owns by Player with ignoreColor)
+        Args:
+            posList: All position that should be checked. They all should have pieces at them.
+            ignoreColor: Player.name of player which pieces should be ignored. If not passed, all Pieces are considered
+        Return:
+            If any piece can be taken returns True
+        """
         threatenend = False
         for pos in posList:
             if self._canBeTaken(pos, ignoreColor):
