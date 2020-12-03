@@ -35,10 +35,20 @@ class GameBoard:
         self.setPiece(change.toPos, self.getPiece(change.fromPos))
         self.setPiece(change.fromPos, None)
 
-    def promotePiece(self, piecePos: BoardPosition, piece: Piece):
+
+
+    def promotePiece(self, piecePos: BoardPosition, promoteName: str):
         # Piece auf piecePos wird mit anderen Piece, abhängig von promoteName ersetzt
         oldPiece = self.getPiece(piecePos)
-        self.setPiece(piecePos, piece)
+        
+        if promoteName == Queen.name:
+            self.setPiece(piecePos, Queen(oldPiece.color, False))
+        elif promoteName == Knight.name:
+            self.setPiece(piecePos, Knight(oldPiece.color, False))
+        elif promoteName == Bishop.name:
+            self.setPiece(piecePos, Bishop(oldPiece.color, False))
+        elif promoteName == Rock.name:
+            self.setPiece(piecePos, Rock(oldPiece.color, False))
 
     def canPromote(self, pos):
         # checkt abhängig vom Piece Type, ob das Piece promote werden darf
