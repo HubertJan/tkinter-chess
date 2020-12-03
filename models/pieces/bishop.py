@@ -1,5 +1,5 @@
 from models.piece import Piece, Direction
-from helper.board_position import BoardPosition
+from helper.board_position import BoardPosition, BoardMove, BoardChange
 
 
 class Bishop(Piece):
@@ -33,14 +33,6 @@ class Bishop(Piece):
                 somethingBetween = True
             pos = BoardPosition(pos.X + xStep, pos.Y + yStep)
         return somethingBetween
-
-    def allPossibleMoves(self, pieceMap, currentPos):
-        possibleMovePos = []
-        for x in range(len(pieceMap)):
-            for y in range(len(pieceMap[x])):
-                if self.canMove(pieceMap, currentPos, BoardPosition(x, y)):
-                    possibleMovePos.append(BoardPosition(x, y))
-        return possibleMovePos
 
     def canPromote(self, pieceMap, currentPos):
         return None

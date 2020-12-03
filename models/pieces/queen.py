@@ -68,13 +68,6 @@ class Queen(Piece):
             c += stepSize
         return somethingBetween
 
-    def allPossibleMoves(self, pieceMap, currentPos):
-        possibleMovePos = []
-        for x in range(len(pieceMap)):
-            for y in range(len(pieceMap[x])):
-                if self.canMove(pieceMap, currentPos, BoardPosition(x, y)):
-                    possibleMovePos.append(BoardPosition(x, y))
-        return possibleMovePos
 
     def canPromote(self, pieceMap, currentPos):
         return None
