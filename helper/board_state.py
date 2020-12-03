@@ -24,7 +24,7 @@ class BoardState:
                 if selectedPiecePos == pos:
                     self.map[x][y].isSelected = True
                 elif selectedPiece is not None:
-                    if(gameBoard.getBoardChangeOfMove(selectedPiecePos, pos) != None):
+                    if(gameBoard.getValidMove(selectedPiecePos, pos) != None):
                         self.map[x][y].isPossible = True
                     else:
                         self.map[x][y].isPossible = False

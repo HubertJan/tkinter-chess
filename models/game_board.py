@@ -1,4 +1,4 @@
-from helper.board_position import BoardPosition
+from helper.board_position import BoardPosition, BoardChange, BoardMove
 from models.piece import Piece, Direction
 from typing import Union
 
@@ -12,49 +12,28 @@ class GameBoard:
     def boardSize(self):
         return [len(self._pieceMap), len(self._pieceMap[0])]
 
-    def _checkIfCheckmate(self, color: str):
-        kingPosList = []
-        for x in range(len(self.pieceMap)):
-            for y in range(len(self.pieceMap[x])):
-                piece = self.pieceMap[x][y]
-                if piece is not None and piece.isKing == True and piece.color == color:
-                    kingPosList.append(BoardPosition(x, y))
+    def getPiece(self, pos: BoardPosition):
+        return self.pieceMap[pos.X][pos.Y]
 
-        isCheckmate = False
-        for kingPos in kingPosList:
-            if self._isThreatenend(kingPos) is True:
-                isCheckmate = True
-        return isCheckmate
+    def setPiece(self, boardPosition, piece):
+        self._pieceMap[boardPosition.X][boardPosition.Y] = piece
 
-    def _isThreatenend(self, pos: BoardPosition, ignoreColor=""):
-        # Gibt True aus, wenn es von irgendeinen anderen Piece angegriffen wird, außer von Pieces mit ignoreColor
-        isThreatenend = False
-        for x in range(len(self.pieceMap)):
-            for y in range(len(self.pieceMap[x])):
-                piece = self.pieceMap[x][y]
-                if(piece is not None):
-                    if (ignoreColor == "" or piece.color != ignoreColor) and piece.canMove(self.pieceMap, BoardPosition(
-                            x, y), pos):
-                        isThreatenend = True
-        return isThreatenend
+    @ property
+    def pieceMap(self):
+        return self._pieceMap[:]
 
-    def isStalemate(self, color: str) -> bool:
-        # Gibt True aus, wenn keine Piece mit color sich bewegen können, aber der König nicht attackiert wird
-        if self.canColorMove(color):
-            return False
-
-        if self._checkIfCheckmate(color):
-            return False
-        return True
-
-    def movePiece(self, fromPos: BoardPosition, toPos: BoardPosition):
-        boardChange = self.getBoardChangeOfMove(fromPos, toPos)
-        if boardChange != None:
-            for move in boardChange:
-                self.setPiece(move[1], self.getPiece(move[0]))
-                self.setPiece(move[0], None)
+    def movePiece(self, fromPos: BoardPosition, toPos: BoardPosition) -> bool:
+        move = self.getValidMove(fromPos, toPos)
+        if move is not None:
+            self.executeChange(move.triggerChange)
+            for change in move.otherChanges:
+                self.executeChange(change)
             return True
         return False
+
+    def executeChange(self, change: BoardChange):
+        self.setPiece(change.toPos, self.getPiece(change.fromPos))
+        self.setPiece(change.fromPos, None)
 
     def promotePiece(self, piecePos: BoardPosition, piece: Piece):
         # Piece auf piecePos wird mit anderen Piece, abhängig von promoteName ersetzt
@@ -72,107 +51,141 @@ class GameBoard:
         else:
             return False
 
-    # If move possible, returns boardChange, otherwise return None
-    def getBoardChangeOfMove(self, fromPos, toPos):
-        piece = self.getPiece(fromPos)
-        pieceAtToPos = self.getPiece(toPos)
-        if piece is None:
-            return None
-        if piece.canMove(self.pieceMap, fromPos, toPos):
-            self.setPiece(toPos, piece)
-            self.setPiece(fromPos, None)
-            if self._checkIfCheckmate(piece.color):
-                self.setPiece(fromPos, piece)
-                self.setPiece(toPos, pieceAtToPos)
-                return None
-            self.setPiece(fromPos, piece)
-            self.setPiece(toPos, pieceAtToPos)
-            return [[fromPos, toPos]]
-        specialMove = self.canSpecialMove(fromPos, toPos)
-        if len(specialMove) != 0:
-            return specialMove
-        else:
-            return None
+    def canColorMove(self, color):
+        return self.getValidMovesByColor(color) != []
 
-    def getAllPossibleMoves(self, color):
-        piecePosList = self._getPiecePositionsWithColor(color)
-        allPossibleMoves = []
-        for piecePos in piecePosList:
-            possibleMovePos = self.getAllPossibleMovePosOfPiece(piecePos)
-            for move in possibleMovePos:
-                allPossibleMoves.append([piecePos, move])
-        return allPossibleMoves
+    def isInCheck(self, color: str) -> bool:
+        kingPosList = []
+        for x in range(len(self.pieceMap)):
+            for y in range(len(self.pieceMap[x])):
+                piece = self.pieceMap[x][y]
+                if piece is not None and piece.isKing == True and piece.color == color:
+                    kingPosList.append(BoardPosition(x, y))
 
-    def getAllPossibleMovePosOfPiece(self, piecePos):
-        piece = self.getPiece(piecePos)
-        if piece == None:
-            return []
-        movePosList = piece.allPossibleMoves(self.pieceMap, piecePos)
+        isInCheck = False
+        for kingPos in kingPosList:
+            if self._canBeTaken(kingPos) is True:
+                isInCheck = True
+        return isInCheck
 
-        possibleMovePos = []
-        for movePos in movePosList:
-            if self._isMoveCheckmate(piecePos, movePos) is False:
-                possibleMovePos.append(movePos)
-        return possibleMovePos
+    def _isMoveCheck(self, move: BoardMove) -> bool:
+        fromPos = move.triggerChange.fromPos
+        toPos = move.triggerChange.toPos
 
-    def _isMoveCheckmate(self, fromPos, toPos):
-        piece = self.getPiece(fromPos)
-        pieceAtToPos = self.getPiece(toPos)
+        piece = self.getPiece(move.triggerChange.fromPos)
+        pieceAtToPos = self.getPiece(move.triggerChange.toPos)
 
         if piece == None:
             return False
 
         self.setPiece(toPos, piece)
         self.setPiece(fromPos, None)
-        isCheckmate = self._checkIfCheckmate(piece.color)
+        isCheck = self.isInCheck(piece.color)
         self.setPiece(fromPos, piece)
         self.setPiece(toPos, pieceAtToPos)
-        return isCheckmate
+        return isCheck
 
-    def getPiece(self, pos: BoardPosition):
-        return self.pieceMap[pos.X][pos.Y]
+    def _canBeTaken(self, pos: BoardPosition, ignoreColor=""):
+        # Gibt True aus, wenn es von irgendeinen anderen Piece angegriffen wird, außer von Pieces mit ignoreColor
+        isThreatenend = False
+        for x in range(len(self.pieceMap)):
+            for y in range(len(self.pieceMap[x])):
+                piece = self.pieceMap[x][y]
+                if(piece is not None):
+                    if (ignoreColor == "" or piece.color != ignoreColor) and piece.canMove(self.pieceMap, BoardPosition(
+                            x, y), pos):
+                        isThreatenend = True
+        return isThreatenend
 
-    def _getPiecePositionsWithColor(self, color):
-        piecePosWithColorList = []
+    def isStalemate(self, color: str) -> bool:
+        # Gibt True aus, wenn keine Piece mit color sich bewegen können, aber der König nicht attackiert wird
+        if self.canColorMove(color):
+            return False
+
+        if self.isInCheck(color):
+            return False
+        return True
+
+    def getValidMove(self, piecePos, toPos) -> BoardMove:
+        moves = self.getValidMoves(piecePos)
+
+        for move in moves:
+            if move.triggerChange.fromPos == piecePos and move.triggerChange.toPos == toPos:
+                return move
+        return None
+
+    def getValidMoves(self, piecePos) -> list[BoardMove]:
+        piece = self.getPiece(piecePos)
+        if piece is None:
+            return []
+
+        moves = []
+
+        moves += self.getUsualMoves(piecePos)
+        moves += self.getOddMoves(piecePos)
+
+        return moves
+
+    def getValidMovesByColor(self, color) -> list[BoardMove]:
+        piecePos = self._getAllPiecePosOfColor(color)
+        moves = []
+        for pos in piecePos:
+            moves += self.getValidMoves(pos)
+        return moves
+
+    def getUsualMove(self, piecePos, toPos) -> list[BoardMove]:
+        moves = self.getUsualMoves(piecePos)
+
+        for move in moves:
+            if move.triggerMove.fromPos == piecePos and move.triggerMove.toPos == toPos:
+                return move
+        return []
+
+    def getUsualMoves(self, piecePos) -> list[BoardMove]:
+        piece = self.getPiece(piecePos)
+        if piece is None:
+            return []
+
+        moves = piece.allMoves(self.pieceMap, piecePos)
+        validMoves = []
+
+        for move in moves:
+            if self._isMoveCheck(move) is False:
+                validMoves.append(move)
+        return validMoves
+
+    def _getAllPiecePosOfColor(self, color):
+        piecePos = []
         for x in range(len(self._pieceMap)):
             for y in range(len(self._pieceMap)):
                 piece = self._pieceMap[x][y]
                 if piece is not None and piece.color is color:
-                    piecePosWithColorList.append(BoardPosition(x, y))
-        return piecePosWithColorList
+                    piecePos.append(BoardPosition(x, y))
+        return piecePos
 
-    # Return castling move, wenn dieser möglich ist
-    def _getSpecialMoves(self):
+    def getOddMoves(self, piecePos) -> list[BoardMove]:
         moves = []
-        moves += (self._getCastlingMoves())
+        moves += self._getCastlingMoves(piecePos)
         return moves
 
-    # checkt ob der Move ein Special move ist, also castling ist, wenn ja dann gibt er die boardChange aus,
-    # wenn nein, dann return []
-    def canSpecialMove(self, fromPos, toPos):
-        moves = self._getSpecialMoves()
-        possibleMove = []
-        if moves != [[]]:
-            for move in moves:
-                if move[0] == [fromPos, toPos]:
-                    possibleMove = move
-                    break
-        return possibleMove
+    def canOddMove(self, piecePos) -> bool:
+        moves = self.getOddMoves(piecePos)
+        canMove = False
+        for move in moves:
+            if move[0] == piecePos:
+                canMove = True
+                break
+        return canMove
 
-    def _getCastlingMove(self, y, rockX):
-        king = self.getPiece(BoardPosition(4, y))
-        rock = self.getPiece(BoardPosition(rockX, y))
-        if king != None and king.name == "king" and rock != None and rock.name == "rock":
-            if not self.checkIfSomethingBetween(BoardPosition(4, y), BoardPosition(rockX, y), "y"):
-                if rockX == 7:
-                    if not self._isThreatenendList([BoardPosition(4, y), BoardPosition(5, y), BoardPosition(6, y)], king.color):
-                        return [BoardPosition(4, y), BoardPosition(6, y)], [BoardPosition(rockX, y), BoardPosition(5, y)]
-                elif rockX == 0:
-                    if not self._isThreatenendList([BoardPosition(4, y), BoardPosition(3, y), BoardPosition(2, y)], king.color):
-                        return [BoardPosition(4, y), BoardPosition(2, y)], [BoardPosition(rockX, y), BoardPosition(3, y)]
-        return None
+    def _getCastlingMoves(self, piecePos):
+        castlingMoves = self._getAllCastlingMoves()
+        moves = []
+        for move in castlingMoves:
+            if move.triggerChange.fromPos== piecePos:
+                moves.append(move)
+        return moves
 
-    def _getCastlingMoves(self):
+    def _getAllCastlingMoves(self) -> list[BoardMove]:
         moves = []
         if self._getCastlingMove(0, 7) is not None:
             moves.append(self._getCastlingMove(0, 7))
@@ -184,10 +197,33 @@ class GameBoard:
             moves.append(self._getCastlingMove(7, 0))
         return moves
 
-    def _isThreatenendList(self, posList, color=""):
+    def _getCastlingMove(self, y, rockX) -> BoardMove:
+        king = self.getPiece(BoardPosition(4, y))
+        rock = self.getPiece(BoardPosition(rockX, y))
+        if king != None and king.name == "king" and rock != None and rock.name == "rock":
+            if not self.checkIfSomethingBetween(BoardPosition(4, y), BoardPosition(rockX, y), "y"):
+                if rockX == 7:
+                    if not self._canAnyBeTaken([BoardPosition(4, y), BoardPosition(5, y), BoardPosition(6, y)], king.color):
+                        triggerChange = BoardChange(
+                            BoardPosition(4, y), BoardPosition(6, y))
+                        otherChange = BoardChange(
+                            BoardPosition(rockX, y), BoardPosition(5, y))
+                        boardMove = BoardMove(triggerChange, otherChange)
+                        return boardMove
+                elif rockX == 0:
+                    if not self._canAnyBeTaken([BoardPosition(4, y), BoardPosition(3, y), BoardPosition(2, y)], king.color):
+                        triggerChange = BoardChange(
+                            BoardPosition(4, y), BoardPosition(2, y))
+                        otherChange = BoardChange(
+                            BoardPosition(rockX, y), BoardPosition(3, y))
+                        boardMove = BoardMove(triggerChange, otherChange)
+                        return boardMove
+        return None
+
+    def _canAnyBeTaken(self, posList, ignoreColor=""):
         threatenend = False
         for pos in posList:
-            if self._isThreatenend(pos, color):
+            if self._canBeTaken(pos, ignoreColor):
                 threatenend = True
         return threatenend
 
@@ -216,16 +252,3 @@ class GameBoard:
                     somethingBetween = True
             c += stepSize
         return somethingBetween
-
-    def _getSpecialMovesOfPiece(self, pos):
-        piece = self.getPiece(pos)
-
-    def setPiece(self, boardPosition, piece):
-        self._pieceMap[boardPosition.X][boardPosition.Y] = piece
-
-    def canColorMove(self, color):
-        return self.getAllPossibleMoves(color) != []
-
-    @ property
-    def pieceMap(self):
-        return self._pieceMap[:]
