@@ -11,7 +11,6 @@ class Piece(ABC):
     def __init__(self, color, isKing):
         self.color = color #Playername which owns the piece
         self.isKing = isKing #If king, piece is not allowed to die
-        
 
     @property
     @abstractmethod

@@ -1,73 +1,18 @@
 from helper.board_position import BoardPosition
 from models.piece import Piece, Direction
-from models.pieces.pawn import Pawn
-from models.pieces.knight import Knight
-from models.pieces.king import King
-from models.pieces.rock import Rock
-from models.pieces.queen import Queen
-from models.pieces.bishop import Bishop
+from typing import Union
 
 
 class GameBoard:
 
-    def _createChessBoard(self):
-        pieceMap = []
-        for x in range(8):
-            pieceMap.append([])
-            for y in range(8):
-                if y == 1:
-                    pieceMap[x].append(
-                        Pawn("black", False, Direction.UP))
-                elif y == 6:
-                    pieceMap[x].append(
-                        Pawn("white", False, Direction.DOWN))
-                elif y == 0:
-                    if(x == 1 or x == 6):
-                        pieceMap[x].append(
-                            Knight("black", False))
-                    elif x == 4:
-                        pieceMap[x].append(
-                            King("black", True))
-                    elif x == 3:
-                        pieceMap[x].append(
-                            Queen("black", False))
-                    elif x == 2 or x == 5:
-                        pieceMap[x].append(
-                            Bishop("black", False))
-                    elif(x == 0 or x == 7):
-                        pieceMap[x].append(
-                            Rock("black", False))
-                    else:
-                        pieceMap[x].append(None)
-                elif y == 7:
-                    if(x == 1 or x == 6):
-                        pieceMap[x].append(
-                            Knight("white", False))
-                    elif x == 4:
-                        pieceMap[x].append(
-                            King("white", True))
-                    elif x == 3:
-                        pieceMap[x].append(
-                            Queen("white", False))
-                    elif x == 2 or x == 5:
-                        pieceMap[x].append(
-                            Bishop("white", False))
-                    elif(x == 0 or x == 7):
-                        pieceMap[x].append(
-                            Rock("white", False))
-                    else:
-                        pieceMap[x].append(None)
-                else:
-                    pieceMap[x].append(None)
-        return pieceMap
+    def __init__(self, pieceList2D: list[list[Piece]]):
+        self._pieceMap = pieceList2D
 
-    def __init__(self):
-        self._pieceMap = []
-        self.boardSize = [8, 8]
-        self._pieceMap = self._createChessBoard()
+    @property
+    def boardSize(self):
+        return [len(self._pieceMap), len(self._pieceMap[0])]
 
-    def _checkIfCheckmate(self, color):
-        # checkt ob der king von color attackiert wird
+    def _checkIfCheckmate(self, color: str):
         kingPosList = []
         for x in range(len(self.pieceMap)):
             for y in range(len(self.pieceMap[x])):
@@ -81,7 +26,7 @@ class GameBoard:
                 isCheckmate = True
         return isCheckmate
 
-    def _isThreatenend(self, pos, ignoreColor=""):
+    def _isThreatenend(self, pos: BoardPosition, ignoreColor=""):
         # Gibt True aus, wenn es von irgendeinen anderen Piece angegriffen wird, außer von Pieces mit ignoreColor
         isThreatenend = False
         for x in range(len(self.pieceMap)):
@@ -93,7 +38,7 @@ class GameBoard:
                         isThreatenend = True
         return isThreatenend
 
-    def isStalemate(self, color):
+    def isStalemate(self, color: str) -> bool:
         # Gibt True aus, wenn keine Piece mit color sich bewegen können, aber der König nicht attackiert wird
         if self.canColorMove(color):
             return False
@@ -102,7 +47,7 @@ class GameBoard:
             return False
         return True
 
-    def movePiece(self, fromPos, toPos):
+    def movePiece(self, fromPos: BoardPosition, toPos: BoardPosition):
         boardChange = self.getBoardChangeOfMove(fromPos, toPos)
         if boardChange != None:
             for move in boardChange:
@@ -111,17 +56,10 @@ class GameBoard:
             return True
         return False
 
-    def promotePiece(self, piecePos, promoteName):
+    def promotePiece(self, piecePos: BoardPosition, piece: Piece):
         # Piece auf piecePos wird mit anderen Piece, abhängig von promoteName ersetzt
         oldPiece = self.getPiece(piecePos)
-        if promoteName == Queen.name:
-            self.setPiece(piecePos, Queen(oldPiece.color, False))
-        elif promoteName == Knight.name:
-            self.setPiece(piecePos, Knight(oldPiece.color, False))
-        elif promoteName == Bishop.name:
-            self.setPiece(piecePos, Bishop(oldPiece.color, False))
-        elif promoteName == Rock.name:
-            self.setPiece(piecePos, Rock(oldPiece.color, False))
+        self.setPiece(piecePos, piece)
 
     def canPromote(self, pos):
         # checkt abhängig vom Piece Type, ob das Piece promote werden darf

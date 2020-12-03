@@ -8,6 +8,7 @@ from controller.game_controller import GameController
 from controller.interface_view import IView
 from models.game_manager import GameManager
 from models.game_board import GameBoard
+from models.chess_board import ChessBoard as ChessBoardModel
 from ui.frames.chess_board import ChessBoard
 from ui.frames.status_bar import StatusBar
 from ui.frames.select_figure_frame import SelectFigureFrame
@@ -50,7 +51,7 @@ class ChessScreen(Screen, IView):
         self._screenManager.navigate("/")
 
     def initBuild(self, time):
-        board = GameBoard()
+        board = ChessBoardModel("black", "white")
         self._isPaused = False
         gameManager = GameManager(board, time)
         self.gameController = GameController(self, gameManager)
@@ -73,7 +74,6 @@ class ChessScreen(Screen, IView):
         self.update()
 
     def clear(self):
-        
         self.chessBoard.destroy()
         self.statusBar.destroy()
         self.screenFrame.destroy()
@@ -86,7 +86,6 @@ class ChessScreen(Screen, IView):
                 onlyClock=True)
 
     def update(self, onlyClock=False):
-
         # If timer is still running after game is finished
         if self.gameController == None:
             return
