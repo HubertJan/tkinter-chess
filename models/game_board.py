@@ -2,6 +2,10 @@ from helper.board_position import BoardPosition, BoardChange, BoardMove
 from models.piece import Piece, Direction
 from typing import Union
 
+from models.pieces.queen import Queen
+from models.pieces.bishop import Bishop
+from models.pieces.rock import Rock
+from models.pieces.knight import Knight
 
 class GameBoard:
 
@@ -34,8 +38,8 @@ class GameBoard:
         return False
 
     def executeChange(self, change: BoardChange):
-        "" It execute the change by moving the pieces from toPos to fromPos
-        ""
+        """ It execute the change by moving the pieces from toPos to fromPos
+        """
         self.setPiece(change.toPos, self.getPiece(change.fromPos))
         self.setPiece(change.fromPos, None)
 

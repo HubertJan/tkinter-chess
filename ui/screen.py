@@ -31,4 +31,5 @@ class Screen(ABC):
     @property
     def _window(self):
         """Can be used as a shortcut to access window property of ScreenManager in _screenManager
+        """
         return self._screenManager.window
