@@ -1,4 +1,4 @@
-# TkinterChess - A Chess game written in Python with Tkinter
+# TkinterChess - A chess game written in Python with Tkinter
 
 TkinterChess is a simple chess game, fully written in Tkinter.
 
