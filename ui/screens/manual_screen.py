@@ -11,13 +11,15 @@ class ManualScreen(Screen):
 
     def initBuild(self):
         self.time = None
-        
+
         self.frame = Frame(width=1000, height=800)
         self.frame.place(x=0, y=0)
 
         LabelInstructions = Label(text="Anleitung",
-                          fg="#265B78")
-        LabelInstructions["font"] = font.Font(family='Arial', size=70, weight='bold')
+                                  master=self.frame,
+                                  fg="#265B78")
+        LabelInstructions["font"] = font.Font(
+            family='Arial', size=70, weight='bold')
         LabelInstructions.place(anchor="center", relx=0.5, rely=0.2)
 
         sBarFrame = Frame(master=self.frame)
@@ -90,8 +92,8 @@ class ManualScreen(Screen):
                             command=self.onButtonClick,
                             borderwidth=0)
         ButtonPlay["font"] = font.Font(family='Arial', size=20, weight='bold')
-        ButtonPlay.place(anchor="center", relx=0.5, rely=0.9, width=210, height=80)
-
+        ButtonPlay.place(anchor="center", relx=0.5,
+                         rely=0.9, width=210, height=80)
 
     def clear(self):
         self.frame.destroy()

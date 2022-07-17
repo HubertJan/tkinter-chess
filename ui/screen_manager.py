@@ -1,4 +1,4 @@
-from tkinter import Tk
+from tkinter import PhotoImage, Tk
 
 from ui.screens.chess_screen import ChessScreen
 from ui.screens.start_screen import StartScreen
@@ -12,7 +12,9 @@ class ScreenManager:
     def __init__(self):
         self.window = Tk()
         self.window.resizable(width=False, height=False)
-        self.window.title("Ein Schach")
+        iconImage = PhotoImage(file = 'IMG/icon.png')
+        self.window.iconphoto(False, iconImage)
+        self.window.title("aChess")
         self.window.geometry("1000x800")
 
         # Jeder Scren wird mit ROUTENAME verknüpft

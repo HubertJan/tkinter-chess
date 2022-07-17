@@ -230,12 +230,10 @@ class GameBoard:
 
     def canOddMove(self, piecePos) -> bool:
         moves = self.getOddMoves(piecePos)
-        canMove = False
         for move in moves:
             if move[0] == piecePos:
-                canMove = True
-                break
-        return canMove
+                return True
+        return False
 
     def _getCastlingMoves(self, piecePos):
         castlingMoves = self._getAllCastlingMoves()

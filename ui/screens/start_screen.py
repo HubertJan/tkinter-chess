@@ -16,7 +16,7 @@ class StartScreen(Screen):
         self._screenManager.navigate("/manual")
 
     def initBuild(self):
-        self.LabelGame = Label(text="Ein Schach",
+        self.LabelGame = Label(text="aChess",
                                fg="#265B78")
         self.LabelGame["font"] = font.Font(
             family='Arial', size=70, weight='bold')
